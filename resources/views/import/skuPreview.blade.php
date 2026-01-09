@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Item Import Preview</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Table row highlighting */
+        .error-row {
+            background-color: #fef2f2 !important;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .error-row:hover {
+            background-color: #fee2e2 !important;
+        }
+        
+        .warning-row {
+            background-color: #fffbeb !important;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .warning-row:hover {
+            background-color: #fef3c7 !important;
+        }
+        
+        .success-row {
+            background-color: #f0fdf4 !important;
+            border-left: 4px solid #10b981;
+        }
+        
+        .success-row:hover {
+            background-color: #dcfce7 !important;
+        }
+        
+        /* Fixed header table */
+        .table-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* Scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Error badge */
+        .error-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        /* Status indicators */
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        
+        .status-error { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .status-success { background-color: #10b981; }
+        
+        /* Line number styling */
+        .line-number {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    @include('layout.sidebar')
+    <main class="container mx-auto px-4 py-6">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <div class="flex items-center mb-2">
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            SKU Import Preview
+                        </h1>
+                        <span class="ml-4 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Preview Mode
+                        </span>
+                    </div>
+                    <!-- <p class="text-gray-600">Review imported items before finalizing. <span class="font-medium text-red-600">Errors must be fixed before proceeding.</span></p> -->
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3">
+                    <a href="item-import.html" class="inline-flex items-center px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Import
+                    </a>
+                    
+                    <!-- <button id="downloadErrorsBtn" class="inline-flex items-center px-5 py-3 bg-red-100 text-red-700 rounded-xl font-medium hover:bg-red-200 transition-all duration-300">
+                        <i class="fas fa-download mr-2"></i>
+                        Download Errors
+                    </button> -->
+                    
+                    <button id="proceedBtn" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Proceed with Import
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Summary Stats -->
+            <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-blue-100 mr-4">
+                            <i class="fas fa-list text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Items</p>
+                            <p class="text-2xl font-bold text-gray-800">1,250</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-green-100 mr-4">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Valid Items</p>
+                            <p class="text-2xl font-bold text-gray-800">1,120</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-red-100 mr-4">
+                            <i class="fas fa-exclamation-circle text-red-600 text-xl error-badge"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Errors</p>
+                            <p class="text-2xl font-bold text-gray-800">45</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-yellow-100 mr-4">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Warnings</p>
+                            <p class="text-2xl font-bold text-gray-800">85</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             -->
+            <!-- Filters and Actions -->
+            
+        </div>
+
+        <!-- Preview Table Container -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200/80 overflow-hidden">
+            <!-- Table Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">SKU Imported Preview</h2>
+                        <!-- <p class="text-gray-600 text-sm mt-1">Showing <span class="font-medium text-indigo-600">1,250</span> items from import file</p> -->
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <span class="status-dot status-success"></span>
+                                <span class="text-sm text-gray-600">Valid</span>
+                            </div>
+                            <!-- <div class="flex items-center">
+                                <span class="status-dot status-warning"></span>
+                                <span class="text-sm text-gray-600">Warning</span>
+                            </div> -->
+                            <div class="flex items-center">
+                                <span class="status-dot status-error"></span>
+                                <span class="text-sm text-gray-600">Error</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div class="table-container">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white ">
+                        <tr>
+                            <th class="p-4 text-left font-semibold w-20">Line #</th>
+                            <th class="p-4 text-left font-semibold">Status</th>
+                            <th class="p-4 text-left font-semibold">Item_Code</th>
+                            <th class="p-4 text-left font-semibold">Size_Name</th>
+                            <th class="p-4 text-left font-semibold">Color_Name</th>
+                            <th class="p-4 text-left font-semibold">Size_Code</th>
+                            <th class="p-4 text-left font-semibold">Color_Code</th>
+                            <th class="p-4 text-left font-semibold">JanCode</th>
+                            <th class="p-4 text-left font-semibold">Quantity</th>
+                            <th class="p-4 text-left font-semibold w-80">Error Message</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200" id="skuPreviewBody">
+                        <!-- Row 1 - Error Example -->
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Table Footer -->
+             <div class="p-6 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+               
+                <!--<div class="flex items-center space-x-2">
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-chevron-left mr-1"></i>
+                        Previous
+                    </button>
+                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors duration-200">
+                        1
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+                        2
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+                        3
+                    </button>
+                    <span class="px-2 text-gray-400">...</span>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+                        125
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
+                        Next
+                        <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div> -->
+            </div>
+            <input type="hidden" id="importType" value="2">
+
+        </div>
+
+        <!-- Action Panel -->
+        <div class="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <!-- <h3 class="font-bold text-gray-800 mb-2">Next Steps</h3> -->
+                    <p class="text-sm text-gray-600">
+                        <!-- <span class="text-red-600 font-medium">You have 45 errors that must be fixed before proceeding.</span> -->
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <!-- <button id="fixErrorsBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-all duration-300">
+                        <i class="fas fa-wrench mr-2"></i>
+                        Fix Errors in Source
+                    </button> -->
+                    <button id="reimportBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all duration-300">
+                        <i class="fas fa-redo mr-2"></i>
+                        Re-import Fixed File
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+             <script src="{{ asset('js/validation/import-validation.js') }}?v={{ time() }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+           
+            const reimportBtn = document.getElementById('reimportBtn');
+            reimportBtn.addEventListener('click', function() {
+                window.location.href = '/sku-master/import';
+            });
+            
+            // Search functionality
+           
+            
+            // Row click to show details
+            
+            
+            // Pagination buttons
+            document.querySelectorAll('.pagination button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const buttonText = this.textContent.trim();
+                    alert(`Page navigation: ${buttonText} (simulated)`);
+                });
+            });
+        });
+       
+    const previewData = JSON.parse(sessionStorage.getItem("skuPreviewData") || "[]");
+    function renderSKUTable(previewData) {
+    const tbody = document.getElementById("skuPreviewBody");
+
+    if (!previewData.length) {
+        tbody.innerHTML = `
+            <tr><td colspan="10" class="text-center py-6 text-gray-500">No SKU preview data found.</td></tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = previewData.map(row => {
+        let statusBadge = "";
+        let rowClass = "";
+
+        if (row.status === "Error") {
+            statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    <i class="fas fa-times-circle mr-1"></i> Error
+                </span>`;
+            rowClass = "error-row hover:bg-red-50";
+        } else if (row.status === "Warning") {
+            statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Warning
+                </span>`;
+            rowClass = "warning-row hover:bg-yellow-50";
+        } else {
+            statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <i class="fas fa-check-circle mr-1"></i> Valid
+                </span>`;
+            rowClass = "hover:bg-green-50";
+        }
+
+        return `
+        <tr class="${rowClass} transition-all duration-200">
+            <td class="p-4"><span class="line-number">${row.lineNo || "_"}</span></td>
+            <td class="p-4">${statusBadge}</td>
+            <td class="p-4 font-mono font-medium text-purple-600">${row.Item_Code || "-"}</td>
+            <td class="p-4"><span class="size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded">${row.SizeName || "-"}</span></td>
+            <td class="p-4"><div class="flex items-center">
+                <span class="color-indicator" style="background-color: #${row.ColorCode || 'ccc'}"></span>
+                <span class="ml-2">${row.ColorName || "-"}</span>
+            </div></td>
+            <td class="p-4"><span class="code-highlight">${row.SizeCode || "-"}</span></td>
+            <td class="p-4"><span class="code-highlight">${row.ColorCode || "-"}</span></td>
+            <td class="p-4 font-mono">${row.JanCD || "-"}</td>
+            <td class="p-4"><span class="quantity-normal">${row.Quantity || "-"}</span></td>
+            <td class="p-4">
+                ${
+                    row.errors.length > 0
+                        ? row.errors.map(err => `<div class="text-sm text-red-600"><i class="fas fa-times-circle mr-1"></i>${err}</div>`).join("")
+                        : row.warnings.length > 0
+                            ? row.warnings.map(warn => `<div class="text-sm text-yellow-600"><i class="fas fa-exclamation-triangle mr-1"></i>${warn}</div>`).join("")
+                            : `<span class="text-green-600 text-sm"><i class="fas fa-check-circle mr-1"></i>No issues</span>`
+                }
+            </td>
+        </tr>`;
+    }).join("");
+}
+document.addEventListener("DOMContentLoaded", function () {
+    // Initial render from sessionStorage (JS validation only)
+    const previewData = JSON.parse(sessionStorage.getItem("skuPreviewData") || "[]");
+    renderSKUTable(previewData);
+
+    // If you want to immediately trigger backend validation:
+    sendPreviewToBackend().then(() => {
+        // Re-render table after SP validation
+        const updatedData = JSON.parse(sessionStorage.getItem("skuPreviewData") || "[]");
+        renderSKUTable(updatedData);
+    });
+});
+
+
+    const errorRows = previewData.filter(r => r.errors && r.errors.length > 0);
+    const validRows = previewData.filter(r => !r.errors || r.errors.length === 0);
+        document.getElementById("proceedBtn").addEventListener("click", function () {
+
+            
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch("/import/process", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify({
+                    valid: validRows,
+                    errors: errorRows,
+                    import_type: document.getElementById("importType").value
+
+                
+                })
+            })
+           .then(res => res.json())
+            .then(data => {
+                if (!data.success) throw new Error("Import failed");
+
+                window.location.href = "/import-log";
+            })
+
+            .catch(err => {
+                console.error("Import Error:", err);
+                alert("Something went wrong during import.");
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>
