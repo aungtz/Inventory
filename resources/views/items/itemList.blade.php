@@ -291,8 +291,6 @@
     <div id="search-pagination-info" class="text-sm text-gray-700"></div>
     <div id="search-pagination-controls" class="flex space-x-2"></div>
 </div>
-
-
     </div>
 
 <!-- sku modal html -->
@@ -481,9 +479,6 @@ function renderMatrixTable(data, container) {
     container.innerHTML = html;
 }
 
-        // Update delete button state based on selected items
-       
-
         // Open SKU modal
         function openSkuModal(itemId, itemName) {
             modalItemName.textContent = itemName;
@@ -497,27 +492,7 @@ function renderMatrixTable(data, container) {
             document.body.classList.remove('modal-open');
         }
 
-        // Event Listeners
-// selectAllCheckbox.addEventListener('change', function () {
-
-//     const visibleCheckboxes = Array.from(
-//         document.querySelectorAll('.item-checkbox')
-//     ).filter(cb => cb.closest('tr').style.display !== 'none');
-
-//     visibleCheckboxes.forEach(checkbox => {
-//         checkbox.checked = this.checked;
-
-//         const itemId = checkbox.dataset.id;
-//         if (this.checked) {
-//             selectedItems.add(itemId);
-//         } else {
-//             selectedItems.delete(itemId);
-//         }
-//     });
-
-//     updateDeleteButtonState();
-// });
-
+       
 
         deleteSelectedBtn.addEventListener('click', function() {
             if (selectedItems.size === 0) return;
@@ -613,16 +588,12 @@ function renderMatrixTable(data, container) {
     let currentPage = 1;
     const itemsPerPage = 10; // Change this to show more/less rows per page
     let searchRows = []; 
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    const tableBody = document.getElementById("itemsTableBody");
-    const rows = document.querySelectorAll("table tbody tr");
+   
     const infoContainer = document.getElementById("pagination-info");
     const controlsContainer = document.getElementById("pagination-controls");
     const originalRows = Array.from(document.querySelectorAll("table tbody tr"));
-    
-    function renderPagination() {
+
+     window.renderPagination = function() {
         const totalItems = rows.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -630,7 +601,7 @@ document.addEventListener("DOMContentLoaded", function() {
         rows.forEach((row, index) => {
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
-            row.style.display = (index >= start && index < end) ? "" : "none";
+row.style.display = (index >= start && index < end) ? "table-row" : "none";
         });
 
         // 2. Update the "Showing X to Y of Z" text
@@ -664,8 +635,22 @@ document.addEventListener("DOMContentLoaded", function() {
             renderPagination();
         });
         controlsContainer.appendChild(nextBtn);
+        console.log("🔥 renderPagination running");
+console.log("currentPage:", currentPage);
+console.log("rows length inside renderPagination:", rows.length);
+
     }
 
+document.addEventListener("DOMContentLoaded", function() {
+    const tableBody = document.getElementById("itemsTableBody");
+    const rows = document.querySelectorAll("table tbody tr");
+    const infoContainer = document.getElementById("pagination-info");
+    const controlsContainer = document.getElementById("pagination-controls");
+    const originalRows = Array.from(document.querySelectorAll("table tbody tr"));
+    
+   
+
+    renderPagination();
 
     function paginateRows(rowsArray) {
     const totalItems = rowsArray.length;
@@ -721,11 +706,10 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 
-    // Helper function to create Tailwind-styled buttons
+   
    
 
-    // Initial Run
-    renderPagination();
+   
 });
  function createButton(text, isDisabled, onClick, isCurrent = false) {
         const btn = document.createElement("button");
@@ -755,7 +739,7 @@ function renderTable() {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
-    filteredRows.slice(start, end).forEach(r => (r.style.display = ""));
+    // filteredRows.slice(start, end).forEach(r => (r.style.display = ""));
 
 }
 
@@ -764,6 +748,7 @@ function renderTable() {
 const tableBody = document.getElementById("itemsTableBody");
 const paginationWrapper = document.getElementById("pagination-wrapper");
 const originalTableHTML = tableBody.innerHTML;
+
 
 
 function renderSearchRows(items) {
@@ -1101,6 +1086,8 @@ let debounceTimer = null;
 
     // 🔥 ALWAYS restore when cleared
     if (!itemCode && !itemName) {
+            window.location.reload();
+
         restoreOriginalTable();
         return;
     }
@@ -1126,6 +1113,7 @@ function executeSearch() {
 
     // Nothing to search
     if (!itemCode && !itemName) {
+        window.location.reload();
         restoreOriginalTable();
         return;
     }
@@ -1148,22 +1136,25 @@ function executeSearch() {
             console.error("Search error:", err);
         });
 }
-
 function restoreOriginalTable() {
+    console.log("✅ restoreOriginalTable called");
+
     tableBody.innerHTML = originalTableHTML;
 
     document.getElementById("search-pagination-wrapper").classList.add("hidden");
     paginationWrapper.style.display = "flex";
 
-     searchRows = [];
+    searchRows = [];
     searchPage = 1;
 
-    // Optional: re-init pagination if needed
-    if (typeof renderTable === "function" && typeof renderPagination === "function") {
-        currentPage = 1;
-        renderTable();
-        renderPagination();
-    }
+    // 🔥 RE-CAPTURE ROWS AFTER innerHTML
+    window.rows = document.querySelectorAll("table tbody tr");
+    console.log("HTML restored, length:", originalTableHTML.length);
+console.log("tbody innerHTML length:", tableBody.innerHTML.length);
+
+
+    currentPage = 1;
+    window.renderPagination();
 }
 
 let searchPage = 1;
@@ -1196,18 +1187,6 @@ function paginateSearchRows() {
 
     controls.innerHTML = "";
 
-//     // ✅ only hide buttons when not needed
-// controls.appendChild(
-//     createButton("Previous", true, () => {})
-// );
-
-// controls.appendChild(
-//     createButton(1, true, () => {}, true)
-// );
-
-// controls.appendChild(
-//     createButton("Next", true, () => {})
-// );
 
 if (totalPages <= 1) return;
 
@@ -1235,13 +1214,6 @@ if (totalPages <= 1) return;
         })
     );
 }
-
-
-
-
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const checkAllCheckbox = document.getElementById('check-all');
 
@@ -1278,10 +1250,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .filter(cb => cb.checked)
             .map(cb => cb.value);
     };
-});
-
-
-
+}); //before change nothing 
     </script>
 </body>
 </html>

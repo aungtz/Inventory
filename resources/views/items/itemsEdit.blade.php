@@ -236,7 +236,7 @@
         </h1>
         <p class="text-gray-600 mt-2">Create new product with detailed specifications</p>
       </div>
-      <a href=""
+      <a href="{{ route ('itemList') }}"
         class="btn-primary px-6 py-3 rounded-xl text-white font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
