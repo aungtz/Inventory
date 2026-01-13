@@ -653,22 +653,18 @@ public function itemSelectDelete(Request $request)
             return response()->json(['success' => false, 'message' => 'Delete failed. Check logs for details.'], 500);
         }
     }
-public function export(Request $request)
+
+
+    public function export(Request $request)
 {
     $itemCode = trim($request->query('item_code'));
     $itemName = trim($request->query('item_name'));
     $viewType = $request->query('view_type', 'item');
+    $format   = $request->query('format', 'excel');
 
-    /*
-    |--------------------------------------------------------------------------
-    | SKU EXPORT LOGIC
-    |--------------------------------------------------------------------------
-    */
+    // SKU logic
     if ($viewType === 'sku') {
-
-        // 🔹 If searching by Item_Name, resolve Item_Code automatically
         if (!$itemCode && $itemName) {
-
             $itemCodes = \App\Models\Item::where('Item_Name', 'like', '%' . $itemName . '%')
                 ->pluck('Item_Code')
                 ->toArray();
@@ -677,22 +673,16 @@ public function export(Request $request)
                 return back()->with('error', 'No items found for this Item Name.');
             }
 
-            // Convert array → comma-separated string
             $itemCode = implode(',', $itemCodes);
         }
 
-        // ❌ Still no item code → stop
         if (!$itemCode) {
             return back()->with('error', 'Item Code is required to export SKU.');
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | BUILD QUERY (VALIDATION)
-    |--------------------------------------------------------------------------
-    */
-    $query = ($viewType === 'sku')
+    // Validation query
+    $query = $viewType === 'sku'
         ? \App\Models\Sku::query()
         : \App\Models\Item::query();
 
@@ -712,13 +702,24 @@ public function export(Request $request)
         return back()->with('error', 'No data found to export.');
     }
 
-    $fileName = ($viewType === 'sku' ? 'sku_' : 'item_') . 'export.xlsx';
+    $fileName = ($viewType === 'sku' ? 'sku_' : 'item_') . 'export';
 
+    // CSV
+    if ($format === 'csv') {
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ItemExport($itemCode, $itemName, $viewType),
+            $fileName . '.csv',
+            \Maatwebsite\Excel\Excel::CSV
+        );
+    }
+
+    // Excel
     return \Maatwebsite\Excel\Facades\Excel::download(
         new \App\Exports\ItemExport($itemCode, $itemName, $viewType),
-        $fileName
+        $fileName . '.xlsx'
     );
 }
+
 
 
 

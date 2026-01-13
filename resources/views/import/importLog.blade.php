@@ -224,28 +224,9 @@
             </div>
             
             <!-- Pagination -->
-            <!-- <div class="p-6 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="text-sm text-gray-600">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">125</span> imports
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200 hover:border-gray-400">
-                        Previous
-                    </button>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors duration-200">
-                        1
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200 hover:border-gray-400">
-                        2
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200 hover:border-gray-400">
-                        3
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200 hover:border-gray-400">
-                        Next
-                    </button>
-                </div>
-            </div> -->
+            @if($logs->hasPages() || $logs->total() > 0)
+                <x-pagination :paginator="$logs" label="imports" />
+            @endif
         </div>
         
         <!-- Quick Tips -->

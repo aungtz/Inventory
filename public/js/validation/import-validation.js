@@ -2,16 +2,36 @@ function validateImportedRows(rows) {
     const jpRegex = /[\u3000-\u30FF\u4E00-\u9FFF\uFF00-\uFFEF]/;
     const spaceRegex = /\s/;
 
+    // FIRST: Create a map to track ALL item codes in the file
+    const itemCodeMap = new Map(); // Create this ONCE, outside the loop
+    
+    // Collect all item codes first
+    rows.forEach((raw, index) => {
+        const rawCode = (raw.Item_Code ?? raw["Item Code"] ?? raw["item_code"] ?? "").toString();
+        const Item_Code = rawCode.trim();
+        
+        if (Item_Code) {
+            const lowerCode = Item_Code.toLowerCase();
+            if (itemCodeMap.has(lowerCode)) {
+                itemCodeMap.get(lowerCode).push(index + 1); // Store line number (1-based)
+            } else {
+                itemCodeMap.set(lowerCode, [index + 1]);
+            }
+        }
+    });
+
+    // SECOND: Now process each row with validation
     return rows.map((raw, index) => {
         let errors = [];
         let warnings = [];
-        let vaild = [];
+        // Remove: let vaild = []; // This variable is not used
 
         const lineNo = index + 1;
         const rawAdminCode = raw.Item_AdminCode ?? raw["Item_AdminCode"] ?? raw["Item_Admin_Code"] ?? "";
 
         // If it's empty, send an empty string so the SP knows it's a NEW record
         const Item_AdminCode = rawAdminCode !== "" ? rawAdminCode.toString().trim() : "";
+        
         // ------------------------------------------
         // Normalize Excel column names ↓↓↓
         // ------------------------------------------
@@ -53,18 +73,38 @@ function validateImportedRows(rows) {
         const ListPrice = row.ListPrice.trim();
         const SalePrice = row.SalePrice.trim();
 
+        // Update row with trimmed values
+        row.Item_Code = Item_Code;
+        row.Item_Name = Item_Name;
+        row.JanCD = JanCD;
+        row.MakerName = MakerName;
+        row.Memo = Memo;
+        row.ListPrice = ListPrice;
+        row.SalePrice = SalePrice;
+
         // -------------------------
         // 1. Item_Code
         // -------------------------
-        // if (!Item_Code) {
-        //     errors.push("Item_Code is required");
-        // } else {
-        //     if (spaceRegex.test(Item_Code)) errors.push("Item_Code cannot contain spaces");
-        //     if (jpRegex.test(Item_Code)) errors.push("Item_Code cannot contain Japanese characters");
-        //     if (Item_Code.length > 50) errors.push("Item_Code max length is 50");
-        //     if (!/^[A-Za-z0-9\-_]+$/.test(Item_Code))
-        //         errors.push("Item_Code allowed: A-Z, 0-9, -, _");
-        // }
+        if (!Item_Code) {
+            errors.push("Item_Code is required");
+        } else {
+            if (spaceRegex.test(Item_Code)) errors.push("Item_Code cannot contain spaces");
+            if (jpRegex.test(Item_Code)) errors.push("Item_Code cannot contain Japanese characters");
+            if (Item_Code.length > 50) errors.push("Item_Code max length is 50");
+            if (!/^[A-Za-z0-9\-_]+$/.test(Item_Code))
+                errors.push("Item_Code allowed: A-Z, 0-9, -, _");
+            
+            // Check for duplicates using the pre-built map
+            const lowerCode = Item_Code.toLowerCase();
+            const duplicateLines = itemCodeMap.get(lowerCode) || [];
+            
+            if (duplicateLines.length > 1) {
+                const otherLines = duplicateLines.filter(line => line !== lineNo);
+                if (otherLines.length > 0) {
+                    errors.push(`Item Code already exists in this file on line${otherLines.length > 1 ? 's' : ''}: ${otherLines.join(', ')}`);
+                }
+            }
+        }
 
         // -------------------------
         // 2. Item_Name
@@ -86,7 +126,6 @@ function validateImportedRows(rows) {
                 errors.push(`JAN Code must be 8 or 13 digits (got ${janStr.length})`);
             }
         }
-
         // -------------------------
         // 4. MakerName
         // -------------------------
@@ -143,7 +182,6 @@ function validateImportedRows(rows) {
         };
     });
 }
-
 
 function parseAndValidate(file) {
     const reader = new FileReader();

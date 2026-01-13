@@ -177,20 +177,10 @@
 
             
             <!-- Pagination -->
-            <!-- <div class="p-4 border-t">
-                <div class="flex justify-between items-center">
-                    <div class="text-sm text-gray-600">
-                        Showing 1 to 10 of 1,250 items
-                    </div>
-                    <div class="flex space-x-2">
-                        <button class="px-3 py-1 border rounded text-sm">Previous</button>
-                        <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</button>
-                        <button class="px-3 py-1 border rounded text-sm">2</button>
-                        <button class="px-3 py-1 border rounded text-sm">3</button>
-                        <button class="px-3 py-1 border rounded text-sm">Next</button>
-                    </div>
-                </div>
-            </div> -->
+           {{-- Use $items (paginated collection), not $log (single model) --}}
+@if($items->hasPages() || $items->total() > 0)
+    <x-pagination :paginator="$items" label="items" />
+@endif
         </div>
     </main>
 </body>

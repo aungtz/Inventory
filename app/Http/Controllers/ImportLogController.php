@@ -15,7 +15,7 @@ class ImportLogController extends Controller
    }
     public function index()
     {
-    $logs = ItemImportLog::orderBy('ImportLog_ID', 'DESC')->get();
+    $logs = ItemImportLog::orderBy('ImportLog_ID', 'DESC')->paginate(10);
     return view('import.importLog', compact('logs'));
     }
    public function importItemPage(){
@@ -34,7 +34,7 @@ class ImportLogController extends Controller
         {
             $log = ItemImportLog::findOrFail($id);
 
-            $items = ItemImportDataLog::where('ImportLog_ID', $id)->get();
+            $items = ItemImportDataLog::where('ImportLog_ID', $id)->paginate(10);
 
             foreach ($items as $row) {
                 $row->Status = 'Valid';
@@ -51,7 +51,7 @@ class ImportLogController extends Controller
         {
             $log = ItemImportLog::findOrFail($id);
 
-            $items = ItemImportErrorLog::where('ImportLog_ID', $id)->get();
+            $items = ItemImportErrorLog::where('ImportLog_ID', $id)->paginate(10);
 
             foreach ($items as $row) {
                 $row->Status = 'Error';
@@ -73,7 +73,7 @@ public function skuDetails($id)
 
 \Log::info('Requested ImportLog_ID', ['id' => $id]);
 
-$items = ItemImportDataLog::where('ImportLog_ID', $id)->get();
+$items = ItemImportDataLog::where('ImportLog_ID', $id)->paginate(10);
 
 \Log::info('Found items count', ['count' => $items->count()]);
 
@@ -97,7 +97,7 @@ public function skuErrorDetails($id)
 {
     $log = ItemImportLog::findOrFail($id);
 
-    $items = ItemImportErrorLog::where('ImportLog_ID', $id)->get();
+    $items = ItemImportErrorLog::where('ImportLog_ID', $id)->paginate(10);
 
     foreach ($items as $row) {
         $row->Status = 'Error';

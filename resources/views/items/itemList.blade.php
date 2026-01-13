@@ -40,14 +40,9 @@
 @include('layout.sidebar')
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <!-- Title and Search section in one row -->
     <div class="flex-1 min-w-0 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <!-- Title section -->
-        <!-- <div class="flex-shrink-0">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 truncate">Item Management</h1>
-        </div> -->
-
         <!-- Search section -->
         <div class="w-full sm:w-auto flex-1">
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -138,18 +133,34 @@
             <input type="hidden" id="viewTypeInput">
         </div>
 
-        <!-- Export Form -->
-        <form id="exportForm" method="GET" action="/items/export" class="inline">
-            <input type="hidden" name="view_type" id="exportViewType" value="item">
-            <button 
-                type="submit"
-                id="exportBtn"
-                class="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center"
-            >
-                <i class="fas fa-file-export mr-2"></i>
-                <span>Export</span>
-            </button>
-        </form>
+        <!-- Export Buttons Group -->
+        <div class="flex gap-2">
+            <!-- Excel Export Form -->
+            <form id="exportForm" method="GET" action="/items/export" class="export-form inline">
+                <input type="hidden" name="view_type" id="excelExportViewType" value="item">
+                <input type="hidden" name="format" value="excel">
+                <button 
+                    type="submit"
+                    class="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center"
+                >
+                    <i class="fas fa-file-excel mr-2 text-green-600"></i>
+                    <span>Excel</span>
+                </button>
+            </form>
+            
+            <!-- CSV Export Form -->
+            <form id="csvExportForm" method="GET" action="/items/export" class="export-form inline">
+                <input type="hidden" name="view_type" id="csvExportViewType" value="item">
+                <input type="hidden" name="format" value="csv">
+                <button 
+                    type="submit"
+                    class="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center"
+                >
+                    <i class="fas fa-file-csv mr-2 text-blue-600"></i>
+                    <span>CSV</span>
+                </button>
+            </form>
+        </div>
 
         <!-- Action Buttons -->
         <div class="flex gap-2 sm:gap-3">
@@ -178,13 +189,16 @@
     </div>
 </div>
 
+
         <!-- Table -->
      <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-200">
     <div class="overflow-x-auto">
         <table class="w-full divide-y divide-gray-200 table-fixed" style="min-width: 1000px;">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12">#</th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12">
+                            <input type="checkbox" id="check-all" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                        </th>      
                     <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Item Code</th>
                     <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-64">Item Name</th>
                     <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan CD</th>
@@ -959,10 +973,10 @@ function setViewType(type) {
     currentViewType = type;
     
     // Update hidden input value
-    document.getElementById('viewTypeInput').value = type;
+     document.getElementById('excelExportViewType').value = type;
+    document.getElementById('csvExportViewType').value = type;
     
     // Update export form hidden input
-    document.getElementById('exportViewType').value = type;
     
     // Update UI
     if (type === 'item') {
@@ -998,47 +1012,52 @@ document.addEventListener('DOMContentLoaded', function() {
         setViewType(urlViewType);
     }
 });
-document.getElementById("exportForm").addEventListener("submit", function(e) {
-    e.preventDefault(); 
 
-    const itemCode = document.getElementById("itemCodeSearch").value.trim();
-    const itemName = document.getElementById("itemNameSearch").value.trim();
-    const live     = document.getElementById("liveSearchCheckbox")?.checked ? 1 : 0;
 
-    // Update hidden inputs
-    upsertHidden(this, "item_code", itemCode);
-    upsertHidden(this, "item_name", itemName);
-    upsertHidden(this, "live", live);
+document.querySelectorAll(".export-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-    // 1️⃣ Get ALL rows and filter for ones that are actually visible on screen
-    const rows = document.querySelectorAll("#itemsTableBody tr");
-    const visibleRows = Array.from(rows).filter(r => {
-        // This check works for inline styles, CSS classes, and jQuery hides
-        return r.offsetWidth > 0 && r.offsetHeight > 0;
+        const viewType = currentViewType;
+
+        const itemCode = document.getElementById("itemCodeSearch")?.value.trim() || "";
+        const itemName = document.getElementById("itemNameSearch")?.value.trim() || "";
+        const live     = document.getElementById("liveSearchCheckbox")?.checked ? 1 : 0;
+
+        upsertHidden(this, "item_code", itemCode);
+        upsertHidden(this, "item_name", itemName);
+        upsertHidden(this, "live", live);
+
+        const rows = document.querySelectorAll("#itemsTableBody tr");
+        const visibleRows = Array.from(rows).filter(row =>
+            row.offsetWidth > 0 && row.offsetHeight > 0
+        );
+
+        // ❌ no rows at all
+        if (visibleRows.length === 0) {
+            alert("No data found to export.");
+            return;
+        }
+
+        // ✅ ONLY validate SKU existence in ITEM view
+        if (viewType === "item") {
+            const validItemRows = visibleRows.filter(row => {
+                const btn = row.querySelector(".view-sku-btn");
+                return btn && btn.dataset.code?.trim();
+            });
+
+            if (validItemRows.length === 0) {
+                alert("Items found but no SKU data.");
+                return;
+            }
+        }
+
+        // ✅ PASS
+        this.submit();
     });
-
-    // 2️⃣ Validation: No items found in the table at all
-    if (visibleRows.length === 0) {
-        alert("No items found in the list. Please search for an item before exporting.");
-        return;
-    }
-
-    // 3️⃣ Validation: Items found, but do they have SKUs?
-    const rowsWithSKU = visibleRows.filter(r => {
-        const skuBtn = r.querySelector(".view-sku-btn");
-        // Ensure the SKU button exists AND has a valid data-code attribute
-        return skuBtn && skuBtn.getAttribute('data-code') && skuBtn.getAttribute('data-code').trim() !== "";
-    });
-
-    // If visible items exist but none have SKU data
-    if (rowsWithSKU.length === 0) {
-        alert("The items found do not have valid SKU data. Export cancelled.");
-        return;
-    }
-
-    // ✅ All validations passed → submit form
-    this.submit();
 });
+
+
 
 function upsertHidden(form, name, value) {
     let input = form.querySelector(`input[name="${name}"]`);
@@ -1222,6 +1241,44 @@ if (totalPages <= 1) return;
 
 
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const checkAllCheckbox = document.getElementById('check-all');
+
+    function getVisibleCheckboxes() {
+        return Array.from(document.querySelectorAll('.item-checkbox'))
+            .filter(cb => cb.closest('tr').offsetParent !== null); // visible only
+    }
+
+    // Check/Uncheck all (CURRENT PAGE ONLY)
+    if (checkAllCheckbox) {
+        checkAllCheckbox.addEventListener('change', function () {
+            const visibleCheckboxes = getVisibleCheckboxes();
+            visibleCheckboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+        });
+    }
+
+    // Update Check-All state
+    document.addEventListener('change', function (e) {
+        if (!e.target.classList.contains('item-checkbox')) return;
+
+        const visibleCheckboxes = getVisibleCheckboxes();
+        const allChecked = visibleCheckboxes.every(cb => cb.checked);
+        const someChecked = visibleCheckboxes.some(cb => cb.checked);
+
+        checkAllCheckbox.checked = allChecked;
+        checkAllCheckbox.indeterminate = someChecked && !allChecked;
+    });
+
+    // Get checked items (CURRENT PAGE ONLY)
+    window.getCheckedItems = function () {
+        return getVisibleCheckboxes()
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+    };
+});
 
 
 
