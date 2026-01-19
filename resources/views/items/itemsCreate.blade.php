@@ -499,8 +499,8 @@ input.border-green-500 {
   </div>
 
   <!-- Enhanced SKU Modal -->
-  <div id="skuModal" class="modal-overlay fixed inset-0 z-50 items-start justify-center pt-20 bg-black/40 backdrop-blur">
-    <div class="modal-content bg-white rounded-3xl shadow-2xl p-8 border border-gray-200/80 mx-4 max-h-[85vh] overflow-hidden flex flex-col max-w-7xl">
+ <div id="skuModal" class="modal-overlay fixed inset-0 z-50 items-start justify-center pt-20 bg-black/40 backdrop-blur">
+    <div class="modal-content bg-white rounded-3xl shadow-2xl p-8 border border-gray-200/80 mx-4 max-h-[85vh]  flex flex-col max-w-7xl">
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
         <div>
@@ -516,29 +516,48 @@ input.border-green-500 {
         </button>
       </div>
 
-      <!-- Modal Content -->
-      <div class="flex-1 no-scrollbar">
-        <table class="w-full border text-sm rounded-xl overflow-hidden">
-          <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white sticky top-0">
-            <tr>
-              <th class="p-4 border-r border-white/20 font-semibold">Delete</th>
-              <th class="p-4 border-r border-white/20 font-semibold">
-                Size Name<br><small class="font-normal opacity-90">(Horizontal axis)</small>
-              </th>
-              <th class="p-4 border-r border-white/20 font-semibold">
-                Color Name<br><small class="font-normal opacity-90">(Vertical axis)</small>
-              </th>
-              <th class="p-4 border-r border-white/20 font-semibold">Size Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold">Color Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold">JAN Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold **w-40**">Qty-flag</th>
-              <th class="p-4 font-semibold">Number in Stock</th>
-            </tr>
-          </thead>
-          <tbody id="skuModalBody" class="bg-white">
-            <!-- JS will inject rows here -->
-          </tbody>
-        </table>
+      <!-- Modal Content - Now with scrollbar -->
+<div class="flex-1 overflow-y-auto">
+        <div class="h-full overflow-y-auto pr-2 custom-scrollbar">
+          <table class="w-full border text-sm rounded-xl overflow-hidden">
+            <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white sticky top-0 z-10">
+              <tr>
+                <th class="p-4 border-r border-white/20 font-semibold">Delete</th>
+                <th class="p-4 border-r border-white/20 font-semibold">
+                  Size Name<br><small class="font-normal opacity-90">(Horizontal axis)</small>
+                </th>
+                <th class="p-4 border-r border-white/20 font-semibold">
+                  Color Name<br><small class="font-normal opacity-90">(Vertical axis)</small>
+                </th>
+                <th class="p-4 border-r border-white/20 font-semibold">Size Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold">Color Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold">JAN Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold w-40">Qty-flag</th>
+                <th class="p-4 font-semibold">Number in Stock</th>
+              </tr>
+            </thead>
+            <tbody id="skuModalBody" class="bg-white">
+              <!-- JS will inject rows here -->
+              <!-- Sample rows to show scrollbar -->
+              <tr class="border-b hover:bg-gray-50">
+                <td class="p-4 text-center"><button class="text-red-500 hover:text-red-700">×</button></td>
+                <td class="p-4">Small</td>
+                <td class="p-4">Red</td>
+                <td class="p-4">S</td>
+                <td class="p-4">RED</td>
+                <td class="p-4">4901234567890</td>
+                <td class="p-4">
+                  <select class="w-full p-2 border rounded-lg">
+                    <option>Available</option>
+                    <option>Out of Stock</option>
+                  </select>
+                </td>
+                <td class="p-4"><input type="number" class="w-full p-2 border rounded-lg" value="10"></td>
+              </tr>
+              <!-- Add more rows as needed -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Modal Footer -->
@@ -568,6 +587,50 @@ input.border-green-500 {
     </div>
   </div>
 
+  <style>
+    /* Custom scrollbar styling */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #c7d2fe #f5f5f5;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f5f5f5;
+      border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c7d2fe;
+      border-radius: 10px;
+      border: 2px solid #f5f5f5;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a5b4fc;
+    }
+    
+    /* Ensure table header stays fixed during scroll */
+    table thead {
+      position: sticky;
+      top: 0;
+    }
+    
+    /* Modal content scroll fix */
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Make tbody scrollable */
+    table {
+      min-width: 100%;
+    }
+  </style>
 
   {{-- JavaScript: image handling + SKU modal + form submit --}}
    <script src="{{ asset('js/validation/item-validation.js') }}?v={{ time() }}"></script>
@@ -614,7 +677,7 @@ errorText.innerText = "⚠️ This Item Code is already taken.";
         .catch(error => console.error('Error checking item code:', error));
     }
 });
-</script>
-
+</script> 
+<!-- Fixed Latest Create Form -->
 </body>
 </html>

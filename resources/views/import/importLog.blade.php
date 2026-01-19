@@ -267,16 +267,7 @@
             });
             
             // Add hover effects to table rows
-            const tableRows = document.querySelectorAll('tbody tr');
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                
-                row.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
+      
             
             // Filter functionality (basic)
             const filterSelects = document.querySelectorAll('select');
@@ -317,7 +308,8 @@
             // Remove it completely after fade-out
             setTimeout(() => alertBox.remove(), 500);
         }
-    }, 5000); 
+    }, 5000);             // Import LOg Latest Updates.
+
     </script>
 </body>
 </html>

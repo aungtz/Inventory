@@ -1,3 +1,18 @@
+const ITEM_LENGTH_MAP = {
+    Item_Code: 50,
+    Item_Name: 100,
+    MakerName: 50,
+    Memo: 255,
+    JanCode:13,
+    ListPrice:13,
+    SalePrice:13,
+    SizeName:100,
+    ColorName:100,
+    Size_Code:4,
+    Color_Code:4,
+};
+
+
 function validateImportedRows(rows) {
     const jpRegex = /[\u3000-\u30FF\u4E00-\u9FFF\uFF00-\uFFEF]/;
     const spaceRegex = /\s/;
@@ -90,7 +105,10 @@ function validateImportedRows(rows) {
         } else {
             if (spaceRegex.test(Item_Code)) errors.push("Item_Code cannot contain spaces");
             if (jpRegex.test(Item_Code)) errors.push("Item_Code cannot contain Japanese characters");
-            if (Item_Code.length > 50) errors.push("Item_Code max length is 50");
+            if (Item_Code && exceedsByteLength(Item_Code, ITEM_LENGTH_MAP.Item_Code)) {
+                errors.push(`Item_Code exceeds DB max length (${ITEM_LENGTH_MAP.Item_Code})`);
+            }
+
             if (!/^[A-Za-z0-9\-_]+$/.test(Item_Code))
                 errors.push("Item_Code allowed: A-Z, 0-9, -, _");
             
@@ -111,10 +129,9 @@ function validateImportedRows(rows) {
         // -------------------------
         if (!Item_Name) {
             errors.push("Item_Name is required");
-        } else if (Item_Name.length > 255) {
-            errors.push("Item_Name max length is 255");
-        }
-
+        } else if (Item_Name && exceedsByteLength(Item_Name, ITEM_LENGTH_MAP.Item_Name)) {
+                errors.push(`Item_Name exceeds DB max length (${ITEM_LENGTH_MAP.Item_Name})`);
+            }
         // -------------------------
         // 3. JanCD
         // -------------------------
@@ -131,28 +148,36 @@ function validateImportedRows(rows) {
         // -------------------------
         if (!MakerName) {
             errors.push("MakerName is required");
-        } else if (MakerName.length > 255) {
-            errors.push("MakerName max length is 255");
+        } else if (MakerName && exceedsByteLength(MakerName, ITEM_LENGTH_MAP.MakerName)) {
+            errors.push(`MakerName exceeds DB max length (${ITEM_LENGTH_MAP.MakerName})`);
         }
 
         // -------------------------
         // 5. Memo
         // -------------------------
-        if (Memo && Memo.length > 500) {
-            errors.push("Memo max length is 500");
+      if (Memo && exceedsByteLength(Memo, ITEM_LENGTH_MAP.Memo)) {
+            errors.push(`Memo exceeds DB max length (${ITEM_LENGTH_MAP.Memo})`);
         }
 
         // -------------------------
         // 6. ListPrice  (keep commas)
         // -------------------------
         if (!ListPrice) {
-            errors.push("ListPrice is required");
-        } else {
-            const numCheck = ListPrice.replace(/,/g, "");
-            if (!/^[0-9]+(\.[0-9]+)?$/.test(numCheck)) {
-                errors.push("ListPrice must be a valid number");
-            }
-        }
+    errors.push("ListPrice is required");
+} else {
+    // 1. Clean the input for numerical validation
+    const numCheck = ListPrice.replace(/,/g, "");
+
+    // 2. Check if it's a valid numeric format
+    if (!/^[0-9]+(\.[0-9]+)?$/.test(numCheck)) {
+        errors.push("ListPrice must be a valid number");
+    } 
+    
+    // 3. Check length (Moved out of 'else if' to ensure it always runs)
+    if (exceedsByteLength(ListPrice, ITEM_LENGTH_MAP.ListPrice)) {
+        errors.push(`ListPrice exceeds DB max length (${ITEM_LENGTH_MAP.ListPrice})`);
+    }
+}
 
         // -------------------------
         // 7. SalePrice (keep commas)
@@ -166,6 +191,9 @@ function validateImportedRows(rows) {
             } else if (parseFloat(numCheck) === 0) {
                 warnings.push("SalePrice is zero — check if intentional");
             }
+            else if(SalePrice && exceedsByteLength(SalePrice,ITEM_LENGTH_MAP.SalePrice)){
+                            errors.push(`SalePrice exceeds DB max length (${ITEM_LENGTH_MAP.SalePrice})`);
+        }
         }
 
         // Status decision
@@ -276,27 +304,39 @@ function validateSKUImported(rows) {
         // -----------------------------
         // 2. Size Name
         // -----------------------------
+
+//   if (exceedsByteLength(ListPrice, ITEM_LENGTH_MAP.ListPrice)) {
+//         errors.push(`ListPrice exceeds DB max length (${ITEM_LENGTH_MAP.ListPrice})`);
+//     }
+
         if (!SizeName) errors.push("Size Name is required");
-        else if (SizeName.length > 50) errors.push("Size Name max length is 50");
+        else if(exceedsByteLength(SizeName,ITEM_LENGTH_MAP.SizeName)){
+            errors.push(`SizeName exceeds DB max length (${ITEM_LENGTH_MAP.SizeName})`);
+        }
 
         // -----------------------------
         // 3. Color Name
         // -----------------------------
         if (!ColorName) errors.push("Color Name is required");
-        else if (ColorName.length > 50) errors.push("Color Name max length is 50");
-
+        else if(exceedsByteLength(ColorName,ITEM_LENGTH_MAP.ColorName)){
+            errors.push(`ColorName exceeds DB max length (${ITEM_LENGTH_MAP.ColorName})`);
+        }
         // -----------------------------
         // 4. Size Code
         // -----------------------------
         if (!SizeCode) errors.push("Size Code is required");
         else if (!/^[0-9]+$/.test(SizeCode)) errors.push("Size Code must be digits only");
-
+        else if(exceedsByteLength(SizeCode,ITEM_LENGTH_MAP.SizeCode)){
+                    errors.push(`SizeCode exceeds DB max length (${ITEM_LENGTH_MAP.SizeCode})`);
+                }
         // -----------------------------
         // 5. Color Code
         // -----------------------------
         if (!ColorCode) errors.push("Color Code is required");
         else if (!/^[0-9]+$/.test(ColorCode)) errors.push("Color Code must be digits only");
-
+             else if(exceedsByteLength(ColorCode,ITEM_LENGTH_MAP.ColorCode)){
+                    errors.push(`ColorCode exceeds DB max length (${ITEM_LENGTH_MAP.ColorCode})`);
+                }       
         // -----------------------------
         // 6. Jan Code
         // -----------------------------
@@ -312,12 +352,24 @@ function validateSKUImported(rows) {
         // 7. Quantity
         // -----------------------------
         if (!Quantity) {
-            errors.push("Quantity is required");
-        } else if (!/^[0-9]+$/.test(Quantity)) {
-            errors.push("Quantity must be a number");
-        } else if (parseInt(Quantity) === 0) {
-            warnings.push("Quantity is zero — check if intentional");
-        }
+    errors.push("Quantity is required");
+}
+else if (!/^[0-9]+$/.test(Quantity)) {
+    errors.push("Quantity must be a number");
+}
+else {
+    const qty = Number(Quantity);
+
+    if (qty > 2147483647) {
+        errors.push("Quantity exceeds maximum allowed value (2,147,483,647)");
+    }
+    else if (qty === 0) {
+        warnings.push("Quantity is zero — check if intentional");
+    }
+}
+     
+        // -----------------------------
+        // 6. Jan Code
 
         let status = "Valid";
         if (errors.length > 0) status = "Error";
@@ -493,5 +545,27 @@ function resetUploadUI() {
     submitBtn.disabled = false;
     submitBtn.innerHTML = 'Upload';
 }
+// Import Validations Latest Updates.before fixed.
 
+function exceedsByteLength(value, maxBytes) {
+    return getStringByteLength(value) > maxBytes;
+}
 
+function getStringByteLength(str) {
+    if (!str) return 0;
+
+    let length = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        const codePoint = str.codePointAt(i);
+
+       if (codePoint > 0xFFFF) {
+            length += 2; // surrogate pair
+            i++;
+        } else {
+            length += 1;
+        }
+    }
+
+    return length;
+}

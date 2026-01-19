@@ -22,14 +22,12 @@
             overflow: hidden;
         }
         /* Hide scrollbar in SKU modal */
-        #skuModal .modal-content::-webkit-scrollbar {
-            display: none;
-        }
+       
 
         #skuModal .modal-content {
             -ms-overflow-style: none;
             scrollbar-width: none;
-            overflow-y: auto; /* Keep scrolling functionality */
+           
         }
 
         
@@ -248,7 +246,7 @@
                             </div>
                         </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 text-right">
+                        <td class="px-3 py-4 whitespace-nowrap text-sm font-semibold text-green-600 text-right">
                             ¥{{ number_format($item->ListPrice ?? 0) }}
                         </td>
 
@@ -295,9 +293,11 @@
 
 <!-- sku modal html -->
     
-    <div id="skuModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden transition-opacity">
-    <div class="relative top-10 mx-auto p-5 border w-full max-w-6xl shadow-lg rounded-xl bg-white">
-        <div class="flex justify-between items-center pb-4 border-b">
+<div id="skuModal"
+     class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-start justify-center pt-10">
+
+<div class="bg-white w-full max-w-6xl rounded-xl shadow-lg flex flex-col max-h-[90vh]">
+<div class="flex justify-between items-center p-5 border-b">
             <div>
                 <h3 class="text-2xl font-bold text-gray-800">
                     SKU Matrix: <span id="modalItemName" class="text-blue-600"></span>
@@ -309,8 +309,8 @@
             </button>
         </div>
         
-        <div class="py-6">
-            <div class="overflow-x-auto" id="matrixContainer">
+<div class="py-6 flex-1 overflow-y-auto">
+            <div class="overflow-auto" id="matrixContainer">
                 <div class="text-center py-10 text-gray-500">
                     <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
                     <p>Loading SKU data...</p>
@@ -818,12 +818,12 @@ function renderSearchRows(items) {
 
             <!-- List Price -->
             <td class="w-32 px-4 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
-                ${Number(item.ListPrice ?? 0).toLocaleString()}
+               ¥${Number(item.ListPrice ?? 0).toLocaleString()}
             </td>
 
             <!-- Sale Price -->
             <td class="w-32 px-4 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
-                ${Number(item.SalePrice ?? 0).toLocaleString()}
+                 ¥${Number(item.SalePrice ?? 0).toLocaleString()}
             </td>
 
             <!-- Action -->
@@ -1076,35 +1076,38 @@ const itemCodeInput = document.getElementById("itemCodeSearch");
 const itemNameInput = document.getElementById("itemNameSearch");
 const searchBtn = document.getElementById("searchButton");
 
-let debounceTimer = null;
 
-// Live typing search
-[itemCodeInput, itemNameInput].forEach(input => {
-   input.addEventListener("keyup", () => {
+let hasSearched = false;
+
+searchBtn.addEventListener("click", () => {
     const itemCode = itemCodeInput.value.trim();
     const itemName = itemNameInput.value.trim();
 
-    // 🔥 ALWAYS restore when cleared
     if (!itemCode && !itemName) {
-            window.location.reload();
-
-        restoreOriginalTable();
+        window.location.reload();
         return;
     }
 
-    // Exact search → do nothing on typing
-    if (!getSearchMode()) return;
-
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        executeSearch();
-    }, 300);
+    hasSearched = true;
+    executeSearch();
 });
 
+[itemCodeInput, itemNameInput].forEach(input => {
+    input.addEventListener("input", () => {
+        if (!hasSearched) return;
+
+        const itemCode = itemCodeInput.value.trim();
+        const itemName = itemNameInput.value.trim();
+
+        if (!itemCode && !itemName) {
+            window.location.reload();
+        }
+    });
 });
+
 
 // Button search (always works)
-searchBtn.addEventListener("click", executeSearch);
+
 
 function executeSearch() {
     const itemCode = document.getElementById("itemCodeSearch").value.trim();
@@ -1114,7 +1117,6 @@ function executeSearch() {
     // Nothing to search
     if (!itemCode && !itemName) {
         window.location.reload();
-        restoreOriginalTable();
         return;
     }
 
@@ -1136,6 +1138,8 @@ function executeSearch() {
             console.error("Search error:", err);
         });
 }
+
+
 function restoreOriginalTable() {
     console.log("✅ restoreOriginalTable called");
 
@@ -1250,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .filter(cb => cb.checked)
             .map(cb => cb.value);
     };
-}); //before change nothing 
+}); //fixed latest include sku matrix scrollable 
     </script>
 </body>
 </html>

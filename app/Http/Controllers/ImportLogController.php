@@ -207,7 +207,9 @@ public function processImport(Request $request)
                 'Size_Code'  => $row['SizeCode'] ?? null,
                 'Color_Code' => $row['ColorCode'] ?? null,
                 'JanCode'    => $row['JanCD'] ?? null,
-                'Quantity'   => (int)($row['Quantity'] ?? 0),
+                // 'Quantity'   => (int)($row['Quantity'] ?? 0),
+                'Quantity' => $row['Quantity'] ?? null,
+
                 'Error_Msg'  => $errorMsg,
             ]);
         }

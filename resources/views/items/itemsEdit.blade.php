@@ -549,34 +549,54 @@
       </div>
 
       <!-- Modal Content -->
-      <div class="flex-1 no-scrollbar">
-        <table class="w-full border text-sm rounded-xl overflow-hidden">
-          <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white sticky top-0">
-            <tr>
-              <th class="p-4 border-r border-white/20 font-semibold">Delete</th>
-              <th class="p-4 border-r border-white/20 font-semibold">
-                Size Name
-              </th>
-              <th class="p-4 border-r border-white/20 font-semibold">
-                Color Name
-              </th>
-              <th class="p-4 border-r border-white/20 font-semibold">Size Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold">Color Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold">JAN Code</th>
-              <th class="p-4 border-r border-white/20 font-semibold **w-40**">Qty-flag</th>
-              <th class="p-4 font-semibold">Number in Stock</th>
-            </tr>
-          </thead>
-          <tbody id="skuModalBody" class="bg-white">
-            <!-- JS will inject rows here -->
-          </tbody>
-        </table>
+ <!-- Modal Content - Now with scrollbar -->
+<div class="flex-1 overflow-y-auto">
+        <div class="h-full overflow-y-auto pr-2 custom-scrollbar">
+          <table class="w-full border text-sm rounded-xl overflow-hidden">
+            <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white sticky top-0 z-10">
+              <tr>
+                <th class="p-4 border-r border-white/20 font-semibold">Delete</th>
+                <th class="p-4 border-r border-white/20 font-semibold">
+                  Size Name<br><small class="font-normal opacity-90">(Horizontal axis)</small>
+                </th>
+                <th class="p-4 border-r border-white/20 font-semibold">
+                  Color Name<br><small class="font-normal opacity-90">(Vertical axis)</small>
+                </th>
+                <th class="p-4 border-r border-white/20 font-semibold">Size Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold">Color Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold">JAN Code</th>
+                <th class="p-4 border-r border-white/20 font-semibold w-40">Qty-flag</th>
+                <th class="p-4 font-semibold">Number in Stock</th>
+              </tr>
+            </thead>
+            <tbody id="skuModalBody" class="bg-white">
+              <!-- JS will inject rows here -->
+              <!-- Sample rows to show scrollbar -->
+              <tr class="border-b hover:bg-gray-50">
+                <td class="p-4 text-center"><button class="text-red-500 hover:text-red-700">×</button></td>
+                <td class="p-4">Small</td>
+                <td class="p-4">Red</td>
+                <td class="p-4">S</td>
+                <td class="p-4">RED</td>
+                <td class="p-4">4901234567890</td>
+                <td class="p-4">
+                  <select class="w-full p-2 border rounded-lg">
+                    <option>Available</option>
+                    <option>Out of Stock</option>
+                  </select>
+                </td>
+                <td class="p-4"><input type="number" class="w-full p-2 border rounded-lg" value="10"></td>
+              </tr>
+              <!-- Add more rows as needed -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
-        <button id="addSkuRowBtn" type="button"
-          class="bg-indigo-100 text-indigo-800 px-6 py-3 rounded-xl font-medium hover:bg-indigo-200 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+        <button id="addSkuRowBtn" type="button" 
+                class="bg-indigo-100 text-indigo-800 px-6 py-3 rounded-xl font-medium hover:bg-indigo-200 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
@@ -584,12 +604,12 @@
         </button>
 
         <div class="flex items-center gap-3">
-          <button type="button" id="closeModalBtn"
-            class="px-8 py-3 rounded-xl font-medium transition-all duration-300 bg-gray-500 text-white hover:bg-gray-600 transform hover:scale-105">
+          <button type="button" id="closeModalBtn" 
+                  class="px-8 py-3 rounded-xl font-medium transition-all duration-300 bg-gray-500 text-white hover:bg-gray-600 transform hover:scale-105">
             Close
           </button>
-          <button type="button" id="saveSkusBtn"
-            class="btn-success px-8 py-3 rounded-xl text-white font-medium flex items-center gap-2 transition-all duration-300">
+          <button type="button" id="saveSkusBtn" 
+                  class="btn-success px-8 py-3 rounded-xl text-white font-medium flex items-center gap-2 transition-all duration-300">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
@@ -1397,7 +1417,7 @@
       console.log('IMAGES:', state?.productImages);
       console.log('SKUS:', state?.skus);
     };
-    //before change nothing
+    //Fixed Latest code Edit form
   </script>
 </body>
 

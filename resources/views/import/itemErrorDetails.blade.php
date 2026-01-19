@@ -33,6 +33,87 @@
         .table-container::-webkit-scrollbar-thumb {
             background: #888;
         }
+
+                /* 1. The Container - MUST allow overflow for tooltips to be seen */
+        .table-container {
+            overflow: visible !important; 
+            padding-bottom: 60px; /* Space for tooltips on the bottom row */
+        }
+
+        /* 2. The Cell - Anchor for the tooltip */
+        .tooltip-cell {
+            position: relative;
+            cursor: default;
+            /* Do NOT use overflow: hidden here */
+        }
+
+        /* 3. The Text Wrapper - Handles the ellipsis (...) */
+        .truncate-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* 4. The Tooltip - ONLY for truncated cells */
+        .tooltip-cell.truncated::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            /* Position exactly below the cell */
+            top: 100%;
+            left: 0;
+            
+            /* Ensure it is on top of EVERYTHING */
+            z-index: 9999;
+            
+            /* Styling */
+            background-color: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+            
+            /* Wrapping Logic */
+            width: max-content;
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+            
+            /* Animation/Visibility */
+            display: none;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+
+        }
+
+        /* 5. Triggering visibility */
+        .tooltip-cell.truncated:hover::after {
+            display: block;
+        }
+
+        /* 6. Change cursor only for truncated cells */
+        .tooltip-cell.truncated {
+            cursor: pointer;
+        }
+
+        tr:hover {
+            position: relative;
+            z-index: 100; /* Makes the hovered row float above others */
+        }
+        /* Fix tooltip overflow for last column */
+.tooltip-cell.truncated:last-child::after {
+    left: auto;
+    right: 0;
+}
+
+.tooltip-cell.truncated::after {
+    top: 100%;
+    left: 0;
+    transform: translateY(-6px);
+}
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -83,7 +164,7 @@
             </div>
             
             <div class="table-container">
-                <table class="w-full">
+    <table class="w-full table-fixed border-separate border-spacing-0">
                     <thead class="bg-gray-100 sticky-header">
                         <tr>
                             <th class="p-3 text-left font-medium text-gray-700">Item_Code</th>
@@ -98,25 +179,49 @@
                         </tr>
                     </thead>
                 @foreach($items as $item)
-<tr class="hover:bg-gray-50">
-    
-  
-    <td class="p-3">{{ $item->Item_Code }}</td>
-    <td class="p-3">{{ $item->Item_Name }}</td>
-    <td class="p-3">{{ $item->JanCD }}</td>
-    <td class="p-3">{{ $item->MakerName }}</td>
-    <td class="p-3">{{ $item->Memo }}</td>
-    <td class="p-3">{{ $item->ListPrice }}</td>
-    <td class="p-3">{{ $item->SalePrice }}</td>
-      {{-- Status column --}}
-    <td class="p-3 font-semibold 
-        {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
-        {{ $item->Error_Msg }}
-    </td>
+ <tr class="border-b hover:bg-gray-50">
+        <!-- Item_Code -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Code }}">
+            <span class="truncate-text font-mono">{{ $item->Item_Code }}</span>
+        </td>
+        
+        <!-- Item_Name -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Name }}">
+            <span class="truncate-text">{{ $item->Item_Name }}</span>
+        </td>
 
+        <!-- JanCD -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->JanCD }}">
+            <span class="truncate-text font-mono">{{ $item->JanCD }}</span>
+        </td>
 
-   
-</tr>
+        <!-- MakerName -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->MakerName }}">
+            <span class="truncate-text">{{ $item->MakerName }}</span>
+        </td>
+
+        <!-- Memo -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Memo }}">
+            <span class="truncate-text">{{ $item->Memo }}</span>
+        </td>
+
+        <!-- ListPrice -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ListPrice }}">
+            <span class="truncate-text">{{ $item->ListPrice }}</span>
+        </td>
+
+        <!-- SalePrice -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SalePrice }}">
+            <span class="truncate-text">{{ $item->SalePrice }}</span>
+        </td>
+
+        <!-- Error Message -->
+        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Error_Msg }}">
+            <span class="truncate-text font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
+                {{ $item->Error_Msg }}
+            </span>
+        </td>
+    </tr>
 @endforeach
 </tbody>
                 </table>
@@ -129,4 +234,38 @@
         </div>
     </main>
 </body>
+<script>
+ function checkOverflow(element) {
+    const span = element.querySelector('.truncate-text');
+    if (!span) return;
+    
+    // Check if text is truncated (scrollWidth > clientWidth)
+    const isTruncated = span.scrollWidth > span.clientWidth;
+    
+    // Only show tooltip if text is actually truncated
+    if (isTruncated) {
+        element.classList.add('truncated');
+    } else {
+        element.classList.remove('truncated');
+        element.removeAttribute('data-tooltip');
+    }
+}
+
+// Run on page load and window resize
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+});
+
+window.addEventListener('resize', function() {
+    initTooltips();
+});
+
+function initTooltips() {
+    const tooltipCells = document.querySelectorAll('.tooltip-cell');
+    tooltipCells.forEach(cell => {
+        checkOverflow(cell);
+    });
+}
+//fixed latest
+</script>
 </html>

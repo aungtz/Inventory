@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Item Import Preview</title>
+    <title>SKU Import Preview</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+       <style>
         /* Table row highlighting */
         .error-row {
             background-color: #fef2f2 !important;
@@ -107,6 +107,75 @@
             font-weight: bold;
             color: #6b7280;
         }
+
+            /* 1. The Container - MUST allow overflow for tooltips to be seen */
+        .table-container {
+            padding-bottom: 60px; /* Space for tooltips on the bottom row */
+        }
+
+        /* 2. The Cell - Anchor for the tooltip */
+        .tooltip-cell {
+            position: relative;
+            cursor: default;
+            /* Do NOT use overflow: hidden here */
+        }
+
+        /* 3. The Text Wrapper - Handles the ellipsis (...) */
+        .truncate-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* 4. The Tooltip - ONLY for truncated cells */
+        .tooltip-cell.truncated::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            /* Position exactly below the cell */
+            top: 100%;
+            left: 0;
+            
+            /* Ensure it is on top of EVERYTHING */
+            z-index: 9999;
+            
+            /* Styling */
+            background-color: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+            
+            /* Wrapping Logic */
+            width: max-content;
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+            
+            /* Animation/Visibility */
+            display: none;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+                transform: translateY(-50px); /* 👈 move tooltip UP */
+
+        }
+
+        /* 5. Triggering visibility */
+        .tooltip-cell.truncated:hover::after {
+            display: block;
+        }
+
+        /* 6. Change cursor only for truncated cells */
+        .tooltip-cell.truncated {
+            cursor: pointer;
+        }
+
+        tr:hover {
+            position: relative;
+            z-index: 100; /* Makes the hovered row float above others */
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -147,58 +216,7 @@
                 </div>
             </div>
             
-            <!-- Summary Stats -->
-            <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-xl bg-blue-100 mr-4">
-                            <i class="fas fa-list text-blue-600 text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total Items</p>
-                            <p class="text-2xl font-bold text-gray-800">1,250</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-xl bg-green-100 mr-4">
-                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Valid Items</p>
-                            <p class="text-2xl font-bold text-gray-800">1,120</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-xl bg-red-100 mr-4">
-                            <i class="fas fa-exclamation-circle text-red-600 text-xl error-badge"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Errors</p>
-                            <p class="text-2xl font-bold text-gray-800">45</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                    <div class="flex items-center">
-                        <div class="p-3 rounded-xl bg-yellow-100 mr-4">
-                            <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Warnings</p>
-                            <p class="text-2xl font-bold text-gray-800">85</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             -->
-            <!-- Filters and Actions -->
+         
             
         </div>
 
@@ -233,7 +251,7 @@
             
             <!-- Table -->
             <div class="table-container">
-                <table class="w-full">
+    <table class="w-full table-fixed border-separate border-spacing-0">
                     <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white ">
                         <tr>
                             <th class="p-4 text-left font-semibold w-20">Line #</th>
@@ -370,29 +388,86 @@
 
         return `
         <tr class="${rowClass} transition-all duration-200">
-            <td class="p-4"><span class="line-number">${row.lineNo || "_"}</span></td>
-            <td class="p-4">${statusBadge}</td>
-            <td class="p-4 font-mono font-medium text-purple-600">${row.Item_Code || "-"}</td>
-            <td class="p-4"><span class="size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded">${row.SizeName || "-"}</span></td>
-            <td class="p-4"><div class="flex items-center">
-                <span class="color-indicator" style="background-color: #${row.ColorCode || 'ccc'}"></span>
-                <span class="ml-2">${row.ColorName || "-"}</span>
-            </div></td>
-            <td class="p-4"><span class="code-highlight">${row.SizeCode || "-"}</span></td>
-            <td class="p-4"><span class="code-highlight">${row.ColorCode || "-"}</span></td>
-            <td class="p-4 font-mono">${row.JanCD || "-"}</td>
-            <td class="p-4"><span class="quantity-normal">${row.Quantity || "-"}</span></td>
-            <td class="p-4">
-                ${
-                    row.errors.length > 0
-                        ? row.errors.map(err => `<div class="text-sm text-red-600"><i class="fas fa-times-circle mr-1"></i>${err}</div>`).join("")
-                        : row.warnings.length > 0
-                            ? row.warnings.map(warn => `<div class="text-sm text-yellow-600"><i class="fas fa-exclamation-triangle mr-1"></i>${warn}</div>`).join("")
-                            : `<span class="text-green-600 text-sm"><i class="fas fa-check-circle mr-1"></i>No issues</span>`
-                }
-            </td>
-        </tr>`;
+    <!-- Line # -->
+    <td class="p-4 font-mono">
+        <span class="line-number">${row.lineNo || "_"}</span>
+    </td>
+
+    <!-- Status -->
+    <td class="p-4">
+        ${statusBadge}
+    </td>
+
+    <!-- Item_Code -->
+    <td class="p-4 tooltip-cell font-mono font-medium text-purple-600 w-40"
+        data-tooltip="${row.Item_Code || '-'}">
+        <span class="truncate-text">${row.Item_Code || "-"}</span>
+    </td>
+
+    <!-- Size Name -->
+    <td class="p-4 tooltip-cell w-40"
+        data-tooltip="${row.SizeName || '-'}">
+        <span class="truncate-text size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full">
+            ${row.SizeName || "-"}
+        </span>
+    </td>
+
+    <!-- Color Name -->
+    <td class="p-4 tooltip-cell w-48"
+        data-tooltip="${row.ColorName || '-'}">
+        <div class="flex items-center">
+            <span class="color-indicator"
+                  style="background-color: #${row.ColorCode || 'ccc'}"></span>
+            <span class="ml-2 truncate-text">${row.ColorName || "-"}</span>
+        </div>
+    </td>
+
+    <!-- Size Code -->
+    <td class="p-4 tooltip-cell w-32"
+        data-tooltip="${row.SizeCode || '-'}">
+        <span class="truncate-text code-highlight">${row.SizeCode || "-"}</span>
+    </td>
+
+    <!-- Color Code -->
+    <td class="p-4 tooltip-cell w-32"
+        data-tooltip="${row.ColorCode || '-'}">
+        <span class="truncate-text code-highlight">${row.ColorCode || "-"}</span>
+    </td>
+
+    <!-- JanCD -->
+    <td class="p-4 tooltip-cell font-mono w-40"
+        data-tooltip="${row.JanCD || '-'}">
+        <span class="truncate-text">${row.JanCD || "-"}</span>
+    </td>
+
+    <!-- Quantity -->
+    <td class="p-4 tooltip-cell w-28"
+        data-tooltip="${row.Quantity || '-'}">
+        <span class="truncate-text quantity-normal">${row.Quantity || "-"}</span>
+    </td>
+
+    <!-- Errors / Warnings -->
+    <td class="p-4 tooltip-cell w-80"
+        data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
+        <span class="truncate-text">
+            ${
+                row.errors.length > 0
+                    ? row.errors.map(err =>
+                        `<div class="text-sm text-red-600"><i class="fas fa-times-circle mr-1"></i>${err}</div>`
+                      ).join("")
+                    : row.warnings.length > 0
+                        ? row.warnings.map(warn =>
+                            `<div class="text-sm text-yellow-600"><i class="fas fa-exclamation-triangle mr-1"></i>${warn}</div>`
+                          ).join("")
+                        : `<span class="text-green-600 text-sm"><i class="fas fa-check-circle mr-1"></i>No issues</span>`
+            }
+        </span>
+    </td>
+</tr>`;
     }).join("");
+     requestAnimationFrame(() => {
+        initTooltips();
+    });
 }
 document.addEventListener("DOMContentLoaded", function () {
     // Initial render from sessionStorage (JS validation only)
@@ -444,6 +519,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
+ function checkOverflow(element) {
+    const span = element.querySelector('.truncate-text');
+    if (!span) return;
+    
+    // Check if text is truncated (scrollWidth > clientWidth)
+    const isTruncated = span.scrollWidth > span.clientWidth;
+    
+    // Only show tooltip if text is actually truncated
+    if (isTruncated) {
+        element.classList.add('truncated');
+    } else {
+        element.classList.remove('truncated');
+        element.removeAttribute('data-tooltip');
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+});
+
+window.addEventListener('resize', function() {
+    initTooltips();
+});
+
+function initTooltips() {
+    const tooltipCells = document.querySelectorAll('.tooltip-cell');
+    tooltipCells.forEach(cell => {
+        checkOverflow(cell);
+    });
+}
+//sku fixed latest.
     </script>
 </body>
 </html>

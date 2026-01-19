@@ -107,6 +107,75 @@
             font-weight: bold;
             color: #6b7280;
         }
+
+            /* 1. The Container - MUST allow overflow for tooltips to be seen */
+        .table-container {
+            padding-bottom: 60px; /* Space for tooltips on the bottom row */
+        }
+
+        /* 2. The Cell - Anchor for the tooltip */
+        .tooltip-cell {
+            position: relative;
+            cursor: default;
+            /* Do NOT use overflow: hidden here */
+        }
+
+        /* 3. The Text Wrapper - Handles the ellipsis (...) */
+        .truncate-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* 4. The Tooltip - ONLY for truncated cells */
+        .tooltip-cell.truncated::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            /* Position exactly below the cell */
+            top: 100%;
+            left: 0;
+            
+            /* Ensure it is on top of EVERYTHING */
+            z-index: 9999;
+            
+            /* Styling */
+            background-color: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+            
+            /* Wrapping Logic */
+            width: max-content;
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+            
+            /* Animation/Visibility */
+            display: none;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+                                        transform: translateY(-60px); /* 👈 move tooltip UP */
+
+        }
+
+        /* 5. Triggering visibility */
+        .tooltip-cell.truncated:hover::after {
+            display: block;
+        }
+
+        /* 6. Change cursor only for truncated cells */
+        .tooltip-cell.truncated {
+            cursor: pointer;
+        }
+
+        tr:hover {
+            position: relative;
+            z-index: 100; /* Makes the hovered row float above others */
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -125,7 +194,6 @@
                             Preview Mode
                         </span>
                     </div>
-                    <p class="text-gray-600">Review imported items before finalizing. <span class="font-medium text-red-600">Errors must be fixed before proceeding.</span></p>
                 </div>
                 
                 <!-- Action Buttons -->
@@ -267,7 +335,7 @@
             
             <!-- Table -->
             <div class="table-container">
-                <table class="w-full">
+    <table class="w-full table-fixed border-separate border-spacing-0">
                     <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white ">
                         <tr>
                             <th class="p-4 text-left font-semibold w-20">Line #</th>
@@ -288,65 +356,14 @@
                 </table>
             </div>
             
-            <!-- Table Footer -->
-            <!-- <div class="p-6 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="text-sm text-gray-600">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">1,250</span> items
-                    <span class="mx-2">•</span>
-                    <span class="font-medium text-green-600">1,120 valid</span>
-                    <span class="mx-2">•</span>
-                    <span class="font-medium text-red-600">45 errors</span>
-                    <span class="mx-2">•</span>
-                    <span class="font-medium text-yellow-600">85 warnings</span>
-                </div> 
-                <div class="flex items-center space-x-2">
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-chevron-left mr-1"></i>
-                        Previous
-                    </button>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors duration-200">
-                        1
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        2
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        3
-                    </button>
-                    <span class="px-2 text-gray-400">...</span>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        125
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        Next
-                        <i class="fas fa-chevron-right ml-1"></i>
-                    </button>
-                </div>
-            </div> -->
+         
         </div>
         <input type="hidden" id="importType" value="1">
 
-        <!-- Action Panel -->
-        <div class="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <!-- <h3 class="font-bold text-gray-800 mb-2">Next Steps</h3>
-                    <p class="text-sm text-gray-600">
-                        <span class="text-red-600 font-medium">You have <span id="errorCount"></span> errors that must be fixed before proceeding.</span>
-                    </p> -->
+      
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <!-- <button id="fixErrorsBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-all duration-300">
-                        <i class="fas fa-wrench mr-2"></i>
-                        Fix Errors in Source
-                    </button> -->
-                    <button id="reimportBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all duration-300">
-                        <i class="fas fa-redo mr-2"></i>
-                        Re-import Fixed File
-                    </button>
-                </div>
-            </div>
-        </div>
+                  
     </main>
 
     <!-- JavaScript -->
@@ -562,32 +579,68 @@
         }
 
         // Insert row into table
-        tableBody.innerHTML += `
-            <tr class="${statusClass} hover:bg-gray-50 transition-all duration-150">
-                <td class="p-4 font-mono">#${String(lineNumber).padStart(3, "0")}</td>
+       tableBody.innerHTML += `
+<tr class="${statusClass} hover:bg-gray-50 transition-all duration-150">
+    <!-- Line # -->
+    <td class="p-4 font-mono">#${String(lineNumber).padStart(3, "0")}</td>
 
-                <td class="p-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        ${row.errors.length > 0 ? "bg-red-100 text-red-800" :
-                            row.warnings.length > 0 ? "bg-yellow-100 text-yellow-800" :
-                            "bg-green-100 text-green-800"}">
-                        <i class="fas ${statusIcon} mr-1"></i>
-                        ${statusLabel}
-                    </span>
-                </td>
+    <!-- Status -->
+    <td class="p-4">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+            ${row.errors.length > 0 ? "bg-red-100 text-red-800" :
+              row.warnings.length > 0 ? "bg-yellow-100 text-yellow-800" :
+              "bg-green-100 text-green-800"}">
+            <i class="fas ${statusIcon} mr-1"></i>
+            ${statusLabel}
+        </span>
+    </td>
 
-                <td class="p-4 font-mono">${row.Item_Code || "-"}</td>
-                <td class="p-4">${row.Item_Name || "-"}</td>
-                <td class="p-4 font-mono">${row.JanCD || "-"}</td>
-                <td class="p-4">${row.MakerName || "-"}</td>
-                <td class="p-4 max-w-xs">
-                    <div class="text-sm text-gray-600">${row.Memo || "-"}</div>
-                </td>
-                <td class="p-4 text-right font-medium">${row.ListPrice ?? "-"}</td>
-                <td class="p-4 text-right font-medium">${row.SalePrice ?? "-"}</td>
-                <td class="p-4">${errorHtml}</td>
-            </tr>
-        `;
+    <!-- Item_Code -->
+    <td class="p-4 tooltip-cell font-mono" data-tooltip="${row.Item_Code || '-'}">
+        <span class="truncate-text">${row.Item_Code || "-"}</span>
+    </td>
+
+    <!-- Item_Name -->
+    <td class="p-4 tooltip-cell" data-tooltip="${row.Item_Name || '-'}">
+        <span class="truncate-text">${row.Item_Name || "-"}</span>
+    </td>
+
+    <!-- JanCD -->
+    <td class="p-4 tooltip-cell font-mono" data-tooltip="${row.JanCD || '-'}">
+        <span class="truncate-text">${row.JanCD || "-"}</span>
+    </td>
+
+    <!-- MakerName -->
+    <td class="p-4 tooltip-cell" data-tooltip="${row.MakerName || '-'}">
+        <span class="truncate-text">${row.MakerName || "-"}</span>
+    </td>
+
+    <!-- Memo -->
+    <td class="p-4 tooltip-cell max-w-xs" data-tooltip="${row.Memo || '-'}">
+        <span class="truncate-text text-sm text-gray-600">
+            ${row.Memo || "-"}
+        </span>
+    </td>
+
+    <!-- ListPrice -->
+    <td class="p-4 tooltip-cell text-right font-medium" data-tooltip="${row.ListPrice ?? '-'}">
+        <span class="truncate-text">${row.ListPrice ?? "-"}</span>
+    </td>
+
+    <!-- SalePrice -->
+    <td class="p-4 tooltip-cell text-right font-medium" data-tooltip="${row.SalePrice ?? '-'}">
+        <span class="truncate-text">${row.SalePrice ?? "-"}</span>
+    </td>
+
+    <!-- Error Message -->
+    <td class="p-4 tooltip-cell w-80" data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
+        <span class="truncate-text">
+            ${errorHtml}
+        </span>
+    </td>
+</tr>
+`;
+
     });
 
     if (!previewData) return;
@@ -642,7 +695,38 @@
         });
 
 
+ function checkOverflow(element) {
+    const span = element.querySelector('.truncate-text');
+    if (!span) return;
+    
+    // Check if text is truncated (scrollWidth > clientWidth)
+    const isTruncated = span.scrollWidth > span.clientWidth;
+    
+    // Only show tooltip if text is actually truncated
+    if (isTruncated) {
+        element.classList.add('truncated');
+    } else {
+        element.classList.remove('truncated');
+        element.removeAttribute('data-tooltip');
+    }
+}
 
+// Run on page load and window resize
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+});
+
+window.addEventListener('resize', function() {
+    initTooltips();
+});
+
+function initTooltips() {
+    const tooltipCells = document.querySelectorAll('.tooltip-cell');
+    tooltipCells.forEach(cell => {
+        checkOverflow(cell);
+    });
+}
+//fixed latest
     </script>
 </body>
 </html>

@@ -52,6 +52,86 @@
         .table-container::-webkit-scrollbar-thumb {
             background: #888;
         }
+          /* Ensure table cells respect fixed width */
+ /* 1. The Container - MUST allow overflow for tooltips to be seen */
+.table-container {
+    overflow: visible !important; 
+    padding-bottom: 60px; /* Space for tooltips on the bottom row */
+}
+
+/* 2. The Cell - Anchor for the tooltip */
+.tooltip-cell {
+    position: relative;
+    cursor: default;
+    /* Do NOT use overflow: hidden here */
+}
+
+/* 3. The Text Wrapper - Handles the ellipsis (...) */
+.truncate-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* 4. The Tooltip - ONLY for truncated cells */
+.tooltip-cell.truncated::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    /* Position exactly below the cell */
+    top: 100%;
+    left: 0;
+    
+    /* Ensure it is on top of EVERYTHING */
+    z-index: 9999;
+    
+    /* Styling */
+    background-color: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: normal;
+    
+    /* Wrapping Logic */
+    width: max-content;
+    max-width: 300px;
+    white-space: normal;
+    word-wrap: break-word;
+    
+    /* Animation/Visibility */
+    display: none;
+    pointer-events: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+/* 5. Triggering visibility */
+.tooltip-cell.truncated:hover::after {
+    display: block;
+}
+
+/* 6. Change cursor only for truncated cells */
+.tooltip-cell.truncated {
+    cursor: pointer;
+}
+
+tr:hover {
+    position: relative;
+    z-index: 100; /* Makes the hovered row float above others */
+}
+  /* Fix tooltip overflow for last column */
+.tooltip-cell.truncated:last-child::after {
+    left: auto;
+    right: 0;
+}
+
+.tooltip-cell.truncated::after {
+    top: 100%;
+    left: 0;
+    transform: translateY(-6px);
+}
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -94,46 +174,62 @@
             <div class="p-4 border-b">
                 <h2 class="text-lg font-semibold text-gray-800">Imported SKUs</h2>
             </div>
-            
-            <div class="table-container">
-                <table class="w-full">
-                    <thead class="bg-gray-100 sticky-header">
-                        <tr>
-                             <th class="p-3 text-left">Item Code</th>
-                                <th class="p-3 text-left">Size</th>
-                                <th class="p-3 text-left">Color</th>
-                                <th class="p-3 text-left">Size Code</th>
-                                <th class="p-3 text-left">Color Code</th>
-                                <th class="p-3 text-left">JAN Code</th>
-                                <th class="p-3 text-left">Quantity</th>
-                                <th class="p-3 text-left">Error Message</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <!-- Row 1 -->
-                        @foreach ($items as $item)
-          <tr class="hover:bg-gray-50">
-                <td class="p-3 font-mono">{{ $item->Item_Code }}</td>
-                <td class="p-3"><span class="size-badge">{{ $item->SizeName }}</span></td>
-                <td class="p-3">
-                    <div class="flex items-center" >
-                        <span class="color-badge" style="background-color: #{{ $item->ColorCode ?? 'ccc' }}"></span>
-                        {{ $item->ColorName }}
-                    </div>
-                </td>
-                <td class="p-3 font-mono">{{ $item->SizeCode }}</td>
-                <td class="p-3 font-mono">{{ $item->ColorCode }}</td>
-                <td class="p-3 font-mono">{{ $item->JanCD }}</td>
-                <td class="p-3 font-medium">{{ $item->Quantity }}</td>
-<td class="p-3 font-semibold 
-        {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
-        {{ $item->Error_Msg }}
-    </td>
+           <div class="table-container">
+   <div class="table-container">
+    <table class="w-full table-fixed border-separate border-spacing-0">
+        <thead class="bg-gray-100 sticky top-0 z-20">
+            <tr>
+                <th class="p-3 text-left w-32">Item Code</th>
+                <th class="p-3 text-left w-20">Size</th>
+                <th class="p-3 text-left w-24">Color</th>
+                <th class="p-3 text-left w-24">Size Code</th>
+                <th class="p-3 text-left w-24">Color Code</th>
+                <th class="p-3 text-left w-40">JAN Code</th>
+                <th class="p-3 text-left w-20">Quantity</th>
+                <th class="p-3 text-left w-64">Error Message</th>
             </tr>
-        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        </thead>
+        <tbody>
+            @foreach ($items as $item)
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Code }}">
+                    <span class="truncate-text font-mono">{{ $item->Item_Code }}</span>
+                </td>
+                
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SizeName }}">
+                    <span class="truncate-text">{{ $item->SizeName }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ColorName }}">
+                        <span class="truncate-text">{{ $item->ColorName }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SizeCode }}">
+                    <span class="truncate-text font-mono">{{ $item->SizeCode }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ColorCode }}">
+                    <span class="truncate-text font-mono">{{ $item->ColorCode }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->JanCD }}">
+                    <span class="truncate-text font-mono">{{ $item->JanCD }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Quantity }}">
+                    <span class="truncate-text">{{ $item->Quantity }}</span>
+                </td>
+
+                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Error_Msg }}">
+                    <span class="truncate-text font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $item->Error_Msg }}
+                    </span>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
             
             <!-- Pagination -->
                   <!-- Pagination -->
@@ -143,4 +239,38 @@
         </div>
     </main>
 </body>
+<script>
+ function checkOverflow(element) {
+    const span = element.querySelector('.truncate-text');
+    if (!span) return;
+    
+    // Check if text is truncated (scrollWidth > clientWidth)
+    const isTruncated = span.scrollWidth > span.clientWidth;
+    
+    // Only show tooltip if text is actually truncated
+    if (isTruncated) {
+        element.classList.add('truncated');
+    } else {
+        element.classList.remove('truncated');
+        element.removeAttribute('data-tooltip');
+    }
+}
+
+// Run on page load and window resize
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+});
+
+window.addEventListener('resize', function() {
+    initTooltips();
+});
+
+function initTooltips() {
+    const tooltipCells = document.querySelectorAll('.tooltip-cell');
+    tooltipCells.forEach(cell => {
+        checkOverflow(cell);
+    });
+}
+//sku fixed latest.
+</script>
 </html>
