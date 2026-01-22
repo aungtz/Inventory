@@ -390,7 +390,7 @@
 
                 // Simulate upload
                 simulateSkuUpload();
-                parseAndValidateSKU(selectedFile);
+                // parseAndValidateSKU(selectedFile);
 
                 
             });

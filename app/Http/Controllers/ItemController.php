@@ -119,52 +119,59 @@ public function store(Request $request)
         ->route('itemList')
         ->with('success', 'Item saved successfully!');
 }
-
-
-public function itemList()
+public function itemList(Request $request)
 {
+    $sort = $request->query('sort', null);
+    $direction = $request->query('direction', 'asc') === 'desc' ? 'desc' : 'asc';
+    
+    // Only allow specific columns for sorting
+    $allowedSorts = ['item_code'];
+    if ($sort && !in_array($sort, $allowedSorts)) {
+        $sort = null;
+    }
+    
     $pdo = DB::getPdo();
-    $stmt = $pdo->prepare("EXEC sp_GetAllItemData");
+    
+    // Call stored procedure with sort parameters
+    $stmt = $pdo->prepare("EXEC sp_GetAllItemData @Sort = :sort, @Direction = :direction");
+    $stmt->bindValue(':sort', $sort ?: null, \PDO::PARAM_STR);
+    $stmt->bindValue(':direction', $direction ?: 'asc', \PDO::PARAM_STR);
     $stmt->execute();
-
+    
     $items = $stmt->fetchAll(\PDO::FETCH_OBJ);
-
+    
     $stmt->nextRowset();
     $images = $stmt->fetchAll(\PDO::FETCH_OBJ);
-
+    
     $stmt->nextRowset();
     $skus = $stmt->fetchAll(\PDO::FETCH_OBJ);
-
-
-$skuMatrixByItem = [];
-
-foreach ($skus as $sku) {
-    // Clean the code: "Tesla " becomes "Tesla"
-    $itemCode = isset($sku->Item_Code) ? trim((string)$sku->Item_Code) : null;
     
-    if (!$itemCode) continue;
-
-    $sizeKey  = trim((string)$sku->Size_Code);
-    $colorKey = trim((string)$sku->Color_Code);
-
-    // Initialize the item bucket if it doesn't exist
-    if (!isset($skuMatrixByItem[$itemCode])) {
-        $skuMatrixByItem[$itemCode] = [
-            'colors' => [],
-            'sizes'  => [],
-            'matrix' => []
-        ];
+    $skuMatrixByItem = [];
+    
+    foreach ($skus as $sku) {
+        $itemCode = isset($sku->Item_Code) ? trim((string)$sku->Item_Code) : null;
+        
+        if (!$itemCode) continue;
+        
+        $sizeKey  = trim((string)$sku->Size_Code);
+        $colorKey = trim((string)$sku->Color_Code);
+        
+        if (!isset($skuMatrixByItem[$itemCode])) {
+            $skuMatrixByItem[$itemCode] = [
+                'colors' => [],
+                'sizes'  => [],
+                'matrix' => []
+            ];
+        }
+        
+        $skuMatrixByItem[$itemCode]['colors'][$colorKey] = $sku->Color_Name;
+        $skuMatrixByItem[$itemCode]['sizes'][$sizeKey]   = $sku->Size_Name;
+        $skuMatrixByItem[$itemCode]['matrix'][$sizeKey][$colorKey] = $sku;
     }
-
-    // Assign data to this specific item bucket
-    $skuMatrixByItem[$itemCode]['colors'][$colorKey] = $sku->Color_Name;
-    $skuMatrixByItem[$itemCode]['sizes'][$sizeKey]   = $sku->Size_Name;
-    $skuMatrixByItem[$itemCode]['matrix'][$sizeKey][$colorKey] = $sku;
+    
+    // Pass sort parameters to view
+    return view('items.itemList', compact('items', 'images', 'skuMatrixByItem', 'sort', 'direction'));
 }
-
-    return view('items.itemList', compact('items', 'images', 'skuMatrixByItem'));
-}
-
 public function getSkuMatrix(Request $request)
 {
     $itemCode = $request->item_code;

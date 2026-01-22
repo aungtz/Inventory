@@ -319,59 +319,59 @@ input.border-green-500 {
 
         <!-- Pricing Information -->
        <div class="fade-in">
-  <div class="pricing-card p-6 rounded-2xl border border-gray-200/80 bg-white shadow-sm">
-    <h3 class="text-xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-      Pricing Information
-    </h3>
+  <div class="pricing-card p-4 md:p-6 rounded-2xl border border-gray-200/80 bg-white shadow-sm overflow-x-hidden">
+  <h3 class="text-lg md:text-xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+    Pricing Information
+  </h3>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      
-      <!-- Basic Price -->
-      <div class="space-y-2">
-        <label class="block font-semibold text-gray-700 text-sm">
-          Sale Price <span class="text-red-500">*</span>
-        </label>
-        <div class="flex items-center input-wrap">
-          <div class="relative flex-1">
-            <input 
-              type="text" 
-              name="SalePrice" 
-              required 
-              placeholder="0"
-              class="price-input input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-sm text-right placeholder:text-right"
-            />
-            <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
-          </div>
-          <span class="ml-3 text-gray-600 font-medium whitespace-nowrap">
-            円
-          </span>
+  <div class="grid grid-cols-2 gap-3 md:gap-6"> <!-- Always 2 columns, smaller gap on mobile -->
+    
+    <!-- Basic Price -->
+    <div class="space-y-1 md:space-y-2 min-w-0">
+      <label class="block font-semibold text-gray-700 text-xs md:text-sm">
+        Sale Price <span class="text-red-500">*</span>
+      </label>
+      <div class="flex items-center">
+        <div class="relative flex-1 min-w-0">
+          <input 
+            type="text" 
+            name="SalePrice" 
+            required 
+            placeholder="0"
+            class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
+          />
+          <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
         </div>
+        <span class="ml-1 md:ml-3 text-gray-600 font-medium whitespace-nowrap text-sm md:text-base flex-shrink-0">
+          円
+        </span>
       </div>
-
-      <!-- List Price -->
-      <div class="space-y-2">
-        <label class="block font-semibold text-gray-700 text-sm">
-          List Price <span class="text-red-500">*</span>
-        </label>
-        <div class="flex items-center input-wrap">
-          <div class="relative flex-1">
-            <input 
-              type="text" 
-              name="ListPrice" 
-              required 
-              placeholder="0"
-              class="price-input input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-sm text-right placeholder:text-right"
-            />
-            <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
-          </div>
-          <span class="ml-3 text-gray-600 font-medium whitespace-nowrap">
-            円
-          </span>
-        </div>
-      </div>
-      
     </div>
+
+    <!-- List Price -->
+    <div class="space-y-1 md:space-y-2 min-w-0">
+      <label class="block font-semibold text-gray-700 text-xs md:text-sm">
+        List Price <span class="text-red-500">*</span>
+      </label>
+      <div class="flex items-center">
+        <div class="relative flex-1 min-w-0">
+          <input 
+            type="text" 
+            name="ListPrice" 
+            required 
+            placeholder="0"
+            class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
+          />
+          <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
+        </div>
+        <span class="ml-1 md:ml-3 text-gray-600 font-medium whitespace-nowrap text-sm md:text-base flex-shrink-0">
+          円
+        </span>
+      </div>
+    </div>
+    
   </div>
+</div>
 </div>
 
         <!-- SKU Section -->
@@ -429,47 +429,48 @@ input.border-green-500 {
               Product Images
             </h2>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                @for($i = 0; $i < 5; $i++)
-                  <div class="group space-y-3 p-4 bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-300 image-upload-box transition-all duration-300">
-                    <!-- Preview -->
-                    <div id="imagePreview{{ $i }}" 
-                         class="image-preview w-full aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center overflow-hidden shadow-inner">
-                      <div class="text-center">
-                        <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span class="text-gray-400 text-xs">No Image</span>
-                      </div>
-                    </div>
+           <div class="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm overflow-x-hidden">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+    @for($i = 0; $i < 5; $i++)
+      <div class="group space-y-2 sm:space-y-3 p-2 sm:p-4 bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-300 image-upload-box transition-all duration-300 min-w-0">
+        <!-- Preview -->
+        <div id="imagePreview{{ $i }}" 
+             class="image-preview w-full aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden shadow-inner">
+          <div class="text-center p-1 sm:p-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-gray-400 mx-auto mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-gray-400 text-xs block">No Image</span>
+          </div>
+        </div>
 
-                    <!-- Name Input -->
-                    <input id="imageName{{ $i }}" name="image_names[]" type="text" placeholder="Image name" 
-                           class="w-full p-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" disabled>
+        <!-- Name Input -->
+        <input id="imageName{{ $i }}" name="image_names[]" type="text" placeholder="Image name" 
+               class="w-full p-1.5 sm:p-2 text-xs sm:text-sm rounded-md sm:rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" disabled>
 
-                    <!-- Buttons -->
-                    <div class="flex gap-2">
-                      <label class="flex-1">
-                        <button id="imageBtn{{ $i }}" type="button" 
-                                class="btn-primary w-full px-3 py-2 text-sm text-white rounded-lg transition-all duration-300">
-                          Upload
-                        </button>
-                        
-                        <input id="imageInput{{ $i }}" name="images[]" type="file" accept="image/*" class="hidden" onchange="validateFile(this)">
-                      </label>
+        <!-- Buttons -->
+        <div class="flex gap-1.5 sm:gap-2 min-w-0">
+          <label class="flex-1 min-w-0">
+            <button id="imageBtn{{ $i }}" type="button" 
+                    class="btn-primary w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-white rounded-md sm:rounded-lg transition-all duration-300 truncate">
+              Upload
+            </button>
+            
+            <input id="imageInput{{ $i }}" name="images[]" type="file" accept="image/*" class="hidden" onchange="validateFile(this)">
+          </label>
 
-                      <button id="imageRemove{{ $i }}" type="button" 
-                              class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105" 
-                              title="Remove">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                @endfor
-              </div>
+          <button id="imageRemove{{ $i }}" type="button" 
+                  class="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-white border border-gray-300 rounded-md sm:rounded-lg hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 flex-shrink-0 min-w-[2rem] sm:min-w-[2.5rem]" 
+                  title="Remove">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    @endfor
+  </div>
+</div>
 
               <input type="hidden" name="images_meta" id="imagesMeta" value="">
             </div>

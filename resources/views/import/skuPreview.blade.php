@@ -108,13 +108,13 @@
             color: #6b7280;
         }
 
-            /* 1. The Container - MUST allow overflow for tooltips to be seen */
-        .table-container {
-            padding-bottom: 60px; /* Space for tooltips on the bottom row */
-        }
-
-        /* 2. The Cell - Anchor for the tooltip */
-        .tooltip-cell {
+          /* Add these styles to your CSS */
+    .table-container {
+        position: relative;
+        width: 100%;
+    }
+    
+      .tooltip-cell {
             position: relative;
             cursor: default;
             /* Do NOT use overflow: hidden here */
@@ -172,10 +172,25 @@
             cursor: pointer;
         }
 
-        tr:hover {
-            position: relative;
-            z-index: 100; /* Makes the hovered row float above others */
+    
+    /* Ensure table cells don't wrap */
+    table {
+        table-layout: auto;
+        min-width: 1200px; /* Minimum width before scrolling */
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .table-container {
+            border-radius: 0;
         }
+        
+        .table-container > div {
+            margin-left: -1rem;
+            margin-right: -1rem;
+            width: calc(100% + 2rem);
+        }
+    }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -447,21 +462,30 @@
     </td>
 
     <!-- Errors / Warnings -->
-    <td class="p-4 tooltip-cell w-80"
+   <td class="p-4"
         data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
-        <span class="truncate-text">
+        <div class="space-y-1 max-h-20 overflow-y-auto">
             ${
                 row.errors.length > 0
                     ? row.errors.map(err =>
-                        `<div class="text-sm text-red-600"><i class="fas fa-times-circle mr-1"></i>${err}</div>`
+                        `<div class="text-sm text-red-600 flex items-start">
+                            <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                            <span class="truncate-text">${err}</span>
+                        </div>`
                       ).join("")
                     : row.warnings.length > 0
                         ? row.warnings.map(warn =>
-                            `<div class="text-sm text-yellow-600"><i class="fas fa-exclamation-triangle mr-1"></i>${warn}</div>`
+                            `<div class="text-sm text-yellow-600 flex items-start">
+                                <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span class="truncate-text">${warn}</span>
+                            </div>`
                           ).join("")
-                        : `<span class="text-green-600 text-sm"><i class="fas fa-check-circle mr-1"></i>No issues</span>`
+                        : `<span class="text-green-600 text-sm flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            No issues
+                          </span>`
             }
-        </span>
+        </div>
     </td>
 </tr>`;
     }).join("");

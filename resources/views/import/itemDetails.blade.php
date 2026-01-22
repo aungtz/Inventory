@@ -163,11 +163,16 @@
                 <td class="p-3 truncate-cell" title="{{ $item->Memo }}">
                     <span class="truncate-content">{{ $item->Memo }}</span>
                 </td>
-                <td class="p-3 truncate-cell" title="{{ $item->ListPrice }}">
-                    <span class="truncate-content">{{ $item->ListPrice }}</span>
-                </td>
+               <td class="p-3 truncate-cell" title="{{ number_format($item->ListPrice, 0) }}">
+    <span class="truncate-content">
+        {{ number_format($item->ListPrice, 0) }}
+    </span>
+</td>
+
                 <td class="p-3 truncate-cell" title="{{ $item->SalePrice }}">
-                    <span class="truncate-content">{{ $item->SalePrice }}</span>
+                    <span class="truncate-content">
+                        {{ number_format($item->SalePrice ,0) }}
+                    </span>
                 </td>
             </tr>
             @endforeach

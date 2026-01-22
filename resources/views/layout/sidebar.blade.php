@@ -68,15 +68,17 @@
         
         /* Mobile menu button */
         .mobile-menu-btn {
-            display: block;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 50;
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(71, 85, 105, 0.5);
-            backdrop-filter: blur(10px);
-        }
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    background: white;            /* white background */
+    color: #1f2937;               /* ← change this to control line color */
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    backdrop-filter: blur(10px);
+}
+
         
         @media (min-width: 1024px) {
             .mobile-menu-btn {
@@ -233,7 +235,7 @@
         <!-- Main Content -->
  
 
-    <script>
+      <script>
         // Mobile sidebar toggle functionality
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileSidebar = document.getElementById('mobileSidebar');
@@ -252,7 +254,16 @@
             document.body.style.overflow = '';
         }
 
-        mobileMenuBtn.addEventListener('click', openMobileSidebar);
+        function toggleMobileSidebar() {
+            if (mobileSidebar.classList.contains('open')) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
+            }
+        }
+
+        // Use toggle for the mobile menu button
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
         closeMobileMenu.addEventListener('click', closeMobileSidebar);
         sidebarOverlay.addEventListener('click', closeMobileSidebar);
 

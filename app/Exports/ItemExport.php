@@ -9,8 +9,10 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting; // Add this
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;     // Add this
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class ItemExport implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting
+
+class ItemExport implements FromQuery, WithHeadings, WithMapping, WithColumnFormatting , WithCustomCsvSettings
 {
     protected $search;
     protected $viewType;
@@ -20,6 +22,16 @@ public function __construct($itemCode = null, $itemName = null, $viewType = 'ite
     $this->itemCode = $itemCode;
     $this->itemName = $itemName;
     $this->viewType = $viewType;
+}
+
+public function getCsvSettings(): array
+{
+    return [
+        'use_bom' => true,   // ⭐ THIS FIXES JAPANESE
+        'delimiter' => ',',
+        'enclosure' => '"',
+        'line_ending' => PHP_EOL,
+    ];
 }
 
 

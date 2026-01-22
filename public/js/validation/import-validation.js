@@ -132,6 +132,8 @@ function validateImportedRows(rows) {
         } else if (Item_Name && exceedsByteLength(Item_Name, ITEM_LENGTH_MAP.Item_Name)) {
                 errors.push(`Item_Name exceeds DB max length (${ITEM_LENGTH_MAP.Item_Name})`);
             }
+            else if (spaceRegex.test(Item_Name)) errors.push("Item_Name cannot contain spaces");
+
         // -------------------------
         // 3. JanCD
         // -------------------------

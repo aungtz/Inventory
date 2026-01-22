@@ -220,6 +220,80 @@
     .error-text:not(.hidden) {
       opacity: 1;
     }
+
+    /* 2. The Cell - Anchor for the tooltip */
+        .tooltip-cell {
+            position: relative;
+            cursor: default;
+            /* Do NOT use overflow: hidden here */
+        }
+
+        /* 3. The Text Wrapper - Handles the ellipsis (...) */
+        .truncate-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* 4. The Tooltip - ONLY for truncated cells */
+        .tooltip-cell.truncated::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            /* Position exactly below the cell */
+            top: 100%;
+            left: 0;
+            
+            /* Ensure it is on top of EVERYTHING */
+            z-index: 9999;
+            
+            /* Styling */
+            background-color: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+            
+            /* Wrapping Logic */
+            width: max-content;
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+            
+            /* Animation/Visibility */
+            display: none;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+
+        }
+
+        /* 5. Triggering visibility */
+        .tooltip-cell.truncated:hover::after {
+            display: block;
+        }
+
+        /* 6. Change cursor only for truncated cells */
+        .tooltip-cell.truncated {
+            cursor: pointer;
+        }
+
+        tr:hover {
+            position: relative;
+            z-index: 100; /* Makes the hovered row float above others */
+        }
+        /* Fix tooltip overflow for last column */
+.tooltip-cell.truncated:last-child::after {
+    left: auto;
+    right: 0;
+}
+
+.tooltip-cell.truncated::after {
+    top: 100%;
+    left: 0;
+    transform: translateY(-6px);
+}
   </style>
 </head>
 
@@ -445,7 +519,7 @@
               Product Images
             </h2>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm ">
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @for($i = 0; $i < 5; $i++)
                   <div
@@ -465,9 +539,17 @@
                     </div>
 
                     <!-- Name Input - Add readonly and onfocus to prevent editing -->
-                    <input id="imageName{{ $i }}" name="image_names[]" type="text" placeholder="Image name"
-                      onfocus="this.blur();"
-                      class="w-full p-2 text-sm rounded-lg border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 cursor-default">
+                    <!-- Image Name Tooltip Wrapper -->
+<div class="tooltip-cell">
+  <input
+    id="imageName{{ $i }}"
+    name="image_names[]"
+    type="text"
+    placeholder="Image name"
+    readonly
+    class="w-full truncate-text p-2 text-sm rounded-lg border border-gray-300 bg-gray-50 cursor-default"
+  >
+</div>
 
                     <!-- Buttons -->
                     <div class="flex gap-2">
@@ -1418,6 +1500,37 @@
       console.log('SKUS:', state?.skus);
     };
     //Fixed Latest code Edit form
+function checkOverflow(element) {
+    const target = element.querySelector('.truncate-text');
+    if (!target) return;
+
+    const isTruncated = target.scrollWidth > target.clientWidth;
+
+    if (isTruncated) {
+        element.classList.add('truncated');
+        element.setAttribute('data-tooltip', target.value || target.textContent);
+    } else {
+        element.classList.remove('truncated');
+        element.removeAttribute('data-tooltip');
+    }
+}
+
+
+// Run on page load and window resize
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+});
+
+window.addEventListener('resize', function() {
+    initTooltips();
+});
+
+function initTooltips() {
+    const tooltipCells = document.querySelectorAll('.tooltip-cell');
+    tooltipCells.forEach(cell => {
+        checkOverflow(cell);
+    });
+}
   </script>
 </body>
 

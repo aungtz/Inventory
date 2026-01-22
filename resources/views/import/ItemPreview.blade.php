@@ -108,13 +108,13 @@
             color: #6b7280;
         }
 
-            /* 1. The Container - MUST allow overflow for tooltips to be seen */
-        .table-container {
-            padding-bottom: 60px; /* Space for tooltips on the bottom row */
-        }
-
-        /* 2. The Cell - Anchor for the tooltip */
-        .tooltip-cell {
+          /* Add these styles to your CSS */
+    .table-container {
+        position: relative;
+        width: 100%;
+    }
+    
+      .tooltip-cell {
             position: relative;
             cursor: default;
             /* Do NOT use overflow: hidden here */
@@ -158,7 +158,7 @@
             display: none;
             pointer-events: none;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-                                        transform: translateY(-60px); /* 👈 move tooltip UP */
+                transform: translateY(-50px); /* 👈 move tooltip UP */
 
         }
 
@@ -172,10 +172,25 @@
             cursor: pointer;
         }
 
-        tr:hover {
-            position: relative;
-            z-index: 100; /* Makes the hovered row float above others */
+    
+    /* Ensure table cells don't wrap */
+    table {
+        table-layout: auto;
+        min-width: 1200px; /* Minimum width before scrolling */
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .table-container {
+            border-radius: 0;
         }
+        
+        .table-container > div {
+            margin-left: -1rem;
+            margin-right: -1rem;
+            width: calc(100% + 2rem);
+        }
+    }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -334,9 +349,9 @@
             </div>
             
             <!-- Table -->
-            <div class="table-container">
+           <div class="table-container">
     <table class="w-full table-fixed border-separate border-spacing-0">
-                    <thead class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white ">
+                    <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white ">
                         <tr>
                             <th class="p-4 text-left font-semibold w-20">Line #</th>
                             <th class="p-4 text-left font-semibold">Status</th>
@@ -582,7 +597,7 @@
        tableBody.innerHTML += `
 <tr class="${statusClass} hover:bg-gray-50 transition-all duration-150">
     <!-- Line # -->
-    <td class="p-4 font-mono">#${String(lineNumber).padStart(3, "0")}</td>
+    <td class="p-4 font-mono"> ${row.lineNo ? Number(String(row.lineNo).replace('#','')) : "_"}</td>
 
     <!-- Status -->
     <td class="p-4">
@@ -633,10 +648,30 @@
     </td>
 
     <!-- Error Message -->
-    <td class="p-4 tooltip-cell w-80" data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
-        <span class="truncate-text">
-            ${errorHtml}
-        </span>
+     <td class="p-4"
+        data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
+        <div class="space-y-1 max-h-20 overflow-y-auto">
+            ${
+                row.errors.length > 0
+                    ? row.errors.map(err =>
+                        `<div class="text-sm text-red-600 flex items-start">
+                            <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                            <span class="truncate-text">${err}</span>
+                        </div>`
+                      ).join("")
+                    : row.warnings.length > 0
+                        ? row.warnings.map(warn =>
+                            `<div class="text-sm text-yellow-600 flex items-start">
+                                <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span class="truncate-text">${warn}</span>
+                            </div>`
+                          ).join("")
+                        : `<span class="text-green-600 text-sm flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            No issues
+                          </span>`
+            }
+        </div>
     </td>
 </tr>
 `;
@@ -645,15 +680,7 @@
 
     if (!previewData) return;
 
-    // // Total rows
-    // const totalCount = previewData.length;
-
-    // // Total errors
-    // const errorCount = previewData.filter(row => row.errors && row.errors.length > 0).length;
-
-    // // Update UI
-    // document.getElementById("totalCount").textContent = totalCount;
-    // document.getElementById("errorCount").textContent = errorCount;
+   
 
 });
     const previewData = JSON.parse(sessionStorage.getItem("previewData") || "[]");
