@@ -41,7 +41,7 @@
         
         /* Fixed header table */
         .table-container {
-            max-height: 70vh;
+            max-height: 80vh;
             overflow-y: auto;
         }
         
@@ -639,12 +639,18 @@
 
     <!-- ListPrice -->
     <td class="p-4 tooltip-cell text-right font-medium" data-tooltip="${row.ListPrice ?? '-'}">
-        <span class="truncate-text">${row.ListPrice ?? "-"}</span>
+        <span class="truncate-text">
+               ${row.ListPrice ? Number(row.ListPrice).toLocaleString('en-US') : '-'}
+
+        </span>
     </td>
 
     <!-- SalePrice -->
     <td class="p-4 tooltip-cell text-right font-medium" data-tooltip="${row.SalePrice ?? '-'}">
-        <span class="truncate-text">${row.SalePrice ?? "-"}</span>
+        <span class="truncate-text">
+                ${row.SalePrice ? Number(row.SalePrice).toLocaleString('en-US') : '-'}
+
+        </span>
     </td>
 
     <!-- Error Message -->

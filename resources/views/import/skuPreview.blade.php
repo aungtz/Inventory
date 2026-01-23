@@ -41,7 +41,7 @@
         
         /* Fixed header table */
         .table-container {
-            max-height: 70vh;
+            max-height: 80vh;
             overflow-y: auto;
         }
         
@@ -288,10 +288,10 @@
                 </table>
             </div>
             
-            <!-- Table Footer -->
+            <!-- Table Footer 
              <div class="p-6 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                
-                <!--<div class="flex items-center space-x-2">
+               <div class="flex items-center space-x-2">
                     <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
                         <i class="fas fa-chevron-left mr-1"></i>
                         Previous
@@ -313,13 +313,13 @@
                         Next
                         <i class="fas fa-chevron-right ml-1"></i>
                     </button>
-                </div> -->
-            </div>
+                </div> 
+            </div>-->
             <input type="hidden" id="importType" value="2">
 
         </div>
 
-        <!-- Action Panel -->
+        <!-- Action Panel 
         <div class="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -328,17 +328,17 @@
                         <!-- <span class="text-red-600 font-medium">You have 45 errors that must be fixed before proceeding.</span> -->
                     </p>
                 </div>
-                <div class="flex flex-wrap gap-3">
-                    <!-- <button id="fixErrorsBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-all duration-300">
+                <!-- <div class="flex flex-wrap gap-3">
+                    <button id="fixErrorsBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-all duration-300">
                         <i class="fas fa-wrench mr-2"></i>
                         Fix Errors in Source
                     </button> -->
-                    <button id="reimportBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all duration-300">
+                    <!-- <button id="reimportBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all duration-300">
                         <i class="fas fa-redo mr-2"></i>
                         Re-import Fixed File
-                    </button>
+                    </button> 
                 </div>
-            </div>
+            </div>-->
         </div>
     </main>
 

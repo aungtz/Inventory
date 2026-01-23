@@ -386,65 +386,75 @@
               </div>
             </div>
             <!-- Memo Right Column -->
-            <div class="flex-1 transform transition-all duration-300 hover:scale-[1.01]">
-              <label class="block font-semibold mb-2 text-gray-700">Memo</label>
-              <div class="input-wrap">
-
-                <textarea name="Memo" rows="10"
-                  class="input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-y">{{ $item->Memo }}</textarea>
-                <p class="error-text hidden"></p>
-              </div>
-            </div>
+           <div class="lg:w-2/5 transform transition-all duration-300 hover:scale-[1.01]">
+      <label class="block font-semibold mb-2 text-gray-700">Memo</label>
+      <div class="input-wrap h-full">
+        <textarea name="Memo" rows="8"
+          class="input-focus w-full lg:min-h-[180px] p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-y">{{ $item->Memo }}</textarea>
+        <p class="error-text hidden"></p>
+      </div>
+    </div>
           </div>
         </div>
 
         <!-- Pricing Information -->
         <div class="fade-in">
-          <div class="pricing-card p-6 rounded-2xl border border-gray-200/80 bg-white shadow-sm">
-            <h3
-              class="text-xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Pricing Information
-            </h3>
+  <div class="pricing-card p-4 md:p-6 rounded-2xl border border-gray-200/80 bg-white shadow-sm overflow-x-hidden">
+  <h3 class="text-lg md:text-xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+    Pricing Information
+  </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-              <!-- Basic Price -->
-              <div class="space-y-2">
-                <label class="block font-semibold text-gray-700 text-sm">
-                  Sale Price <span class="text-red-500">*</span>
-                </label>
-                <div class="flex items-center input-wrap">
-                  <div class="relative flex-1">
-                    <input type="text" name="SalePrice" required placeholder="0" value="{{ $item->SalePrice }}"
-                      class="price-input input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-sm text-right placeholder:text-right" />
-                    <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
-                  </div>
-                  <span class="ml-3 text-gray-600 font-medium whitespace-nowrap">
-                    円
-                  </span>
-                </div>
-              </div>
-
-              <!-- List Price -->
-              <div class="space-y-2">
-                <label class="block font-semibold text-gray-700 text-sm">
-                  List Price <span class="text-red-500">*</span>
-                </label>
-                <div class="flex items-center input-wrap">
-                  <div class="relative flex-1">
-                    <input type="text" name="ListPrice" required placeholder="0" value="{{ $item->ListPrice }}"
-                      class="price-input input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-sm text-right placeholder:text-right" />
-                    <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
-                  </div>
-                  <span class="ml-3 text-gray-600 font-medium whitespace-nowrap">
-                    円
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          </div>
+  <div class="grid grid-cols-2 gap-3 md:gap-6"> <!-- Always 2 columns, smaller gap on mobile -->
+    
+    <!-- Basic Price -->
+    <div class="space-y-1 md:space-y-2 min-w-0">
+      <label class="block font-semibold text-gray-700 text-xs md:text-sm">
+        Sale Price <span class="text-red-500">*</span>
+      </label>
+      <div class="flex items-center">
+        <div class="relative flex-1 min-w-0">
+          <input 
+            type="text" 
+            name="SalePrice" 
+            required 
+            placeholder="0"
+            value="{{ $item->ListPrice }}"
+            class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
+          />
+          <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
         </div>
+        <span class="ml-1 md:ml-3 text-gray-600 font-medium whitespace-nowrap text-sm md:text-base flex-shrink-0">
+          円
+        </span>
+      </div>
+    </div>
+
+    <!-- List Price -->
+    <div class="space-y-1 md:space-y-2 min-w-0">
+      <label class="block font-semibold text-gray-700 text-xs md:text-sm">
+        List Price <span class="text-red-500">*</span>
+      </label>
+      <div class="flex items-center">
+        <div class="relative flex-1 min-w-0">
+          <input 
+            type="text" 
+            name="ListPrice" 
+            required 
+            placeholder="0"
+            value="{{ $item->SalePrice}}"
+            class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
+          />
+          <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
+        </div>
+        <span class="ml-1 md:ml-3 text-gray-600 font-medium whitespace-nowrap text-sm md:text-base flex-shrink-0">
+          円
+        </span>
+      </div>
+    </div>
+    
+  </div>
+</div>
+</div>
 
         <!-- SKU Section -->
         <div class="fade-in">
@@ -497,9 +507,9 @@
                     {{-- SKU List --}}
                     @foreach ($item->skus as $sku)
                       <tr class="border-b hover:bg-gray-50">
-                        <td class="p-4">{{ $sku->Color_Name }}</td>
-                        <td class="p-4">{{ $sku->Size_Name }}</td>
-                        <td class="p-4">{{ $sku->Quantity }}</td>
+                         <td class="p-4 border-r break-words max-w-xs">{{ $sku->Color_Name }}</td>
+                <td class="p-4 border-r break-words max-w-xs">{{ $sku->Size_Name }}</td>
+                <td class="p-4 border-r">{{ $sku->Quantity }}</td>
                       </tr>
                     @endforeach
                   @endif
@@ -520,7 +530,7 @@
             </h2>
 
             <div class="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm ">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                 @for($i = 0; $i < 5; $i++)
                   <div
                     class="group space-y-3 p-4 bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-300 image-upload-box transition-all duration-300">
@@ -1432,9 +1442,9 @@
           const row = document.createElement('tr');
           row.className = 'border-b border-gray-200 hover:bg-gray-50/50 transition-all duration-200';
           row.innerHTML = `
-          <td class="p-4 border-r">${escapeHtml(sku.colorName || '-')}</td>
-          <td class="p-4 border-r">${escapeHtml(sku.sizeName || '-')}</td>
-          <td class="p-4 border-r">${escapeHtml(sku.stockQuantity || '0')}</td>
+           <td class="p-4 border-r break-words max-w-xs">${escapeHtml(sku.colorName || '-')}</td>
+                <td class="p-4 border-r break-words max-w-xs">${escapeHtml(sku.sizeName || '-')}</td>
+                <td class="p-4 border-r">${escapeHtml(sku.stockQuantity || '0')}</td>
         `;
           skuTableBody.appendChild(row);
         });

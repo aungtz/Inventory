@@ -123,12 +123,12 @@
                         <!-- Item Code Search -->
                         <div class="relative min-w-0">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-hashtag text-gray-400 text-sm"></i>
+                                <!-- <i class="fas fa-hashtag text-gray-400 text-sm"></i> -->
                             </div>
                             <textarea 
                                 id="itemCodeSearch"
                                 name="item_code_search"
-                                placeholder="Item Code..."
+                                placeholder="Item Code Search"
                                 rows="1"
                                 class="w-full min-w-[140px] pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 resize-y text-sm min-h-[42px]"
                             ></textarea>
@@ -137,12 +137,12 @@
                         <!-- Item Name Search -->
                         <div class="relative min-w-0">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-tag text-gray-400 text-sm"></i>
+                                <!-- <i class="fas fa-tag text-gray-400 text-sm"></i> -->
                             </div>
                             <textarea 
                                 id="itemNameSearch"
                                 name="item_name_search"
-                                placeholder="Item Name..."
+                                placeholder="Item Name Search"
                                 rows="1"
                                 class="w-full min-w-[140px] pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 resize-y text-sm min-h-[42px]"
                             ></textarea>
@@ -1100,9 +1100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
+    let isExporting = false;
 document.querySelectorAll(".export-form").forEach(form => {
     form.addEventListener("submit", function (e) {
+                isExporting = true;
+
         e.preventDefault();
 
         const viewType = currentViewType;
@@ -1197,6 +1199,7 @@ searchBtn.addEventListener("click", () => {
 [itemCodeInput, itemNameInput].forEach(input => {
     input.addEventListener("input", () => {
         if (!hasSearched) return;
+        if(!isExporting)return;
 
         const itemCode = itemCodeInput.value.trim();
         const itemName = itemNameInput.value.trim();

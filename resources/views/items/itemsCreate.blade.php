@@ -306,11 +306,11 @@ input.border-green-500 {
 
 
             <!-- Memo Right Column -->
-            <div class="flex-1 transform transition-all duration-300 hover:scale-[1.01]">
+    <div class="lg:w-2/5 transform transition-all duration-300 hover:scale-[1.01]">
               <label class="block font-semibold mb-2 text-gray-700">Memo</label>
-                <div class="input-wrap">
+      <div class="input-wrap">
               <textarea name="Memo" rows="10" onblur="validateMemoLength(this)"
-                      class="input-focus w-full p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-y"></textarea>
+                  class="input-focus w-full lg:min-h-[180px] p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-y"></textarea>
                         <p class="error-text hidden"></p>
             </div>
                     </div>

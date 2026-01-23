@@ -464,8 +464,8 @@
               const row = document.createElement('tr');
               row.className = 'border-b border-gray-200 transition-all duration-200';
               row.innerHTML = `
-                <td class="p-4 border-r">${escapeHtml(sku.colorName || '-')}</td>
-                <td class="p-4 border-r">${escapeHtml(sku.sizeName || '-')}</td>
+                <td class="p-4 border-r break-words max-w-xs">${escapeHtml(sku.colorName || '-')}</td>
+                <td class="p-4 border-r break-words max-w-xs">${escapeHtml(sku.sizeName || '-')}</td>
                 <td class="p-4 border-r">${escapeHtml(sku.stockQuantity || '0')}</td>
               `;
               skuTableBody.appendChild(row);
