@@ -41,6 +41,7 @@
         
         /* Fixed header table */
         .table-container {
+            min-height: 40vh;
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -150,7 +151,7 @@
             
             /* Wrapping Logic */
             width: max-content;
-            max-width: 300px;
+            max-width: 400px;
             white-space: normal;
             word-wrap: break-word;
             
@@ -214,7 +215,7 @@
                 
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-3">
-                    <a href="item-import.html" class="inline-flex items-center px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300">
+                    <a href="/item-master/import" class="inline-flex items-center px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Back to Import
                     </a>
@@ -288,57 +289,13 @@
                 </table>
             </div>
             
-            <!-- Table Footer 
-             <div class="p-6 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-               
-               <div class="flex items-center space-x-2">
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-chevron-left mr-1"></i>
-                        Previous
-                    </button>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors duration-200">
-                        1
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        2
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        3
-                    </button>
-                    <span class="px-2 text-gray-400">...</span>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        125
-                    </button>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-200">
-                        Next
-                        <i class="fas fa-chevron-right ml-1"></i>
-                    </button>
-                </div> 
-            </div>-->
+            
             <input type="hidden" id="importType" value="2">
 
         </div>
 
-        <!-- Action Panel 
-        <div class="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <!-- <h3 class="font-bold text-gray-800 mb-2">Next Steps</h3> -->
-                    <p class="text-sm text-gray-600">
-                        <!-- <span class="text-red-600 font-medium">You have 45 errors that must be fixed before proceeding.</span> -->
-                    </p>
-                </div>
-                <!-- <div class="flex flex-wrap gap-3">
-                    <button id="fixErrorsBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-all duration-300">
-                        <i class="fas fa-wrench mr-2"></i>
-                        Fix Errors in Source
-                    </button> -->
-                    <!-- <button id="reimportBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all duration-300">
-                        <i class="fas fa-redo mr-2"></i>
-                        Re-import Fixed File
-                    </button> 
-                </div>
-            </div>-->
+        
+       
         </div>
     </main>
 
@@ -413,80 +370,98 @@
         ${statusBadge}
     </td>
 
-    <!-- Item_Code -->
-    <td class="p-4 tooltip-cell font-mono font-medium text-purple-600 w-40"
-        data-tooltip="${row.Item_Code || '-'}">
-        <span class="truncate-text">${row.Item_Code || "-"}</span>
-    </td>
+   <!-- Item_Code -->
+<td class="p-4 font-mono font-medium text-purple-600 w-40"
+    title="${row.Item_Code || '-'}">
+    <span class="truncate-text block whitespace-nowrap overflow-hidden text-ellipsis">
+        ${row.Item_Code || "-"}
+    </span>
+</td>
 
-    <!-- Size Name -->
-    <td class="p-4 tooltip-cell w-40"
-        data-tooltip="${row.SizeName || '-'}">
-        <span class="truncate-text size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full">
-            ${row.SizeName || "-"}
+<!-- Size Name -->
+<td class="p-4 w-40">
+    <span class="truncate-text size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis"
+          title="${row.SizeName || '-'}">
+        ${row.SizeName || "-"}
+    </span>
+</td>
+
+<!-- Color Name -->
+<td class="p-4 w-48">
+    <div class="flex items-center">
+        <span class="color-indicator"
+              style="background-color: #${row.ColorCode || 'ccc'}"></span>
+        <span class="ml-2 truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
+              title="${row.ColorName || '-'}">
+            ${row.ColorName || "-"}
         </span>
-    </td>
+    </div>
+</td>
 
-    <!-- Color Name -->
-    <td class="p-4 tooltip-cell w-48"
-        data-tooltip="${row.ColorName || '-'}">
-        <div class="flex items-center">
-            <span class="color-indicator"
-                  style="background-color: #${row.ColorCode || 'ccc'}"></span>
-            <span class="ml-2 truncate-text">${row.ColorName || "-"}</span>
-        </div>
-    </td>
+<!-- Size Code -->
+<td class="p-4 w-32">
+    <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
+          title="${row.SizeCode || '-'}">
+        ${row.SizeCode || "-"}
+    </span>
+</td>
 
-    <!-- Size Code -->
-    <td class="p-4 tooltip-cell w-32"
-        data-tooltip="${row.SizeCode || '-'}">
-        <span class="truncate-text code-highlight">${row.SizeCode || "-"}</span>
-    </td>
+<!-- Color Code -->
+<td class="p-4 w-32">
+    <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
+          title="${row.ColorCode || '-'}">
+        ${row.ColorCode || "-"}
+    </span>
+</td>
 
-    <!-- Color Code -->
-    <td class="p-4 tooltip-cell w-32"
-        data-tooltip="${row.ColorCode || '-'}">
-        <span class="truncate-text code-highlight">${row.ColorCode || "-"}</span>
-    </td>
+<!-- JanCD -->
+<td class="p-4 font-mono w-40">
+    <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
+          title="${row.JanCD || '-'}">
+        ${row.JanCD || "-"}
+    </span>
+</td>
 
-    <!-- JanCD -->
-    <td class="p-4 tooltip-cell font-mono w-40"
-        data-tooltip="${row.JanCD || '-'}">
-        <span class="truncate-text">${row.JanCD || "-"}</span>
-    </td>
+<!-- Quantity -->
+<td class="p-4 w-28">
+    <span class="truncate-text quantity-normal whitespace-nowrap overflow-hidden text-ellipsis block"
+          title="${row.Quantity || '-'}">
+        ${row.Quantity || "-"}
+    </span>
+</td>
 
-    <!-- Quantity -->
-    <td class="p-4 tooltip-cell w-28"
-        data-tooltip="${row.Quantity || '-'}">
-        <span class="truncate-text quantity-normal">${row.Quantity || "-"}</span>
-    </td>
-
-    <!-- Errors / Warnings -->
-   <td class="p-4"
-        data-tooltip="${row.errors.concat(row.warnings).join(' | ') || 'No issues'}">
-        <div class="space-y-1 max-h-20 overflow-y-auto">
-            ${
-                row.errors.length > 0
-                    ? row.errors.map(err =>
-                        `<div class="text-sm text-red-600 flex items-start">
-                            <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
-                            <span class="truncate-text">${err}</span>
+<!-- Errors / Warnings -->
+<td class="p-4">
+    <div class="space-y-1 max-h-20 overflow-y-auto"
+         title="${row.errors.concat(row.warnings).join('\n') || 'No issues'}">
+        ${
+            row.errors.length > 0
+                ? row.errors.map(err =>
+                    `<div class="text-sm text-red-600 flex items-start">
+                        <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                        <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
+                              title="${err}">
+                            ${err}
+                        </span>
+                    </div>`
+                  ).join("")
+                : row.warnings.length > 0
+                    ? row.warnings.map(warn =>
+                        `<div class="text-sm text-yellow-600 flex items-start">
+                            <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
+                            <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
+                                  title="${warn}">
+                                ${warn}
+                            </span>
                         </div>`
                       ).join("")
-                    : row.warnings.length > 0
-                        ? row.warnings.map(warn =>
-                            `<div class="text-sm text-yellow-600 flex items-start">
-                                <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
-                                <span class="truncate-text">${warn}</span>
-                            </div>`
-                          ).join("")
-                        : `<span class="text-green-600 text-sm flex items-center">
-                            <i class="fas fa-check-circle mr-2"></i>
-                            No issues
-                          </span>`
-            }
-        </div>
-    </td>
+                    : `<span class="text-green-600 text-sm flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        No issues
+                      </span>`
+        }
+    </div>
+</td>
 </tr>`;
     }).join("");
      requestAnimationFrame(() => {
@@ -574,7 +549,7 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//sku fixed latest.
+//sku fixed latest.28 Jan 28
     </script>
 </body>
 </html>

@@ -199,7 +199,7 @@ td {
             
            <div class="table-container">
     <table class="w-full">
-        <thead class="bg-gray-100 sticky-header">
+        <thead class="bg-gray-100 ">
             <tr>
                 <th class="p-3 text-left">Item Code</th>
                 <th class="p-3 text-left">Size</th>
@@ -264,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+//Fixed latest code  26 jan 2026
 </script>
             
             <!-- Pagination -->

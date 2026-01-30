@@ -182,7 +182,7 @@
 
             
             <!-- Pagination -->
-           {{-- Use $items (paginated collection), not $log (single model) --}}
+           {{-- Fixed latest code  26 jan 2026 --}}
 @if($items->hasPages() || $items->total() > 0)
     <x-pagination :paginator="$items" label="items" />
 @endif

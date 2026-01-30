@@ -418,7 +418,7 @@
             name="SalePrice" 
             required 
             placeholder="0"
-            value="{{ $item->ListPrice }}"
+            value="{{ $item->SalePrice }}"
             class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
           />
           <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
@@ -441,7 +441,7 @@
             name="ListPrice" 
             required 
             placeholder="0"
-            value="{{ $item->SalePrice}}"
+            value="{{ $item->ListPrice}}"
             class="price-input input-focus w-full p-2 md:p-4 text-xs md:text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-right placeholder:text-right"
           />
           <p class="error-text hidden text-xs text-red-500 mt-1 text-right"></p>
@@ -1541,6 +1541,7 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
+//Fixed Latest Code 26 Jan 26
   </script>
 </body>
 

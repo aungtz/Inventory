@@ -82,6 +82,12 @@
         opacity: 0;
     }
 }
+#modalItemName {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    display: inline-block;
+}
 
 /* Accessibility improvements */
 [onclick*="sortTable"]:focus {
@@ -111,7 +117,7 @@
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 >
                 <label for="liveSearchCheckbox" class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                    Live Search
+                    Like Search
                 </label>
             </div>
 
@@ -373,12 +379,6 @@
 
 
 
-            <!-- No items message -->
-            <!-- <div id="noItemsMessage" class="py-12 text-center">
-                <i class="fas fa-box-open text-gray-300 text-5xl mb-4"></i>
-                <p class="text-gray-500 text-lg">No items found. Click "Create New Item" to add your first item.</p>
-            </div>
-        </div> -->
         
         <!-- Pagination (example) -->
         <div class="flex items-center justify-between mt-6" id="pagination-wrapper">
@@ -859,7 +859,7 @@ function renderSearchRows(items) {
     if (items.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="10" class="text-center py-6 text-gray-500">
+                <td colspan="8" class="text-center py-6 text-gray-500">
                     No results found
                 </td>
             </tr>
@@ -1103,11 +1103,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let isExporting = false;
 document.querySelectorAll(".export-form").forEach(form => {
     form.addEventListener("submit", function (e) {
-                isExporting = true;
-
         e.preventDefault();
 
-        const viewType = currentViewType;
+const viewType =
+    this.querySelector('input[name="view_type"]')?.value || currentViewType;
+console.log("viewType =", viewType);
 
         const itemCode = document.getElementById("itemCodeSearch")?.value.trim() || "";
         const itemName = document.getElementById("itemNameSearch")?.value.trim() || "";
@@ -1122,29 +1122,33 @@ document.querySelectorAll(".export-form").forEach(form => {
             row.offsetWidth > 0 && row.offsetHeight > 0
         );
 
-        // ❌ no rows at all
-        if (visibleRows.length === 0) {
-            alert("No data found to export.");
-            return;
-        }
+        /* ✅ ITEM export validation */
+      if (viewType === "item" || viewType === "sku") {
+    // ITEM export needs table rows
+    if (visibleRows.length === 0) {
+        alert("No data found to export.");
+        return;
+    }
 
-        // ✅ ONLY validate SKU existence in ITEM view
-        if (viewType === "item") {
-            const validItemRows = visibleRows.filter(row => {
-                const btn = row.querySelector(".view-sku-btn");
-                return btn && btn.dataset.code?.trim();
-            });
+    const validItemRows = visibleRows.filter(row => {
+        const btn = row.querySelector(".view-sku-btn");
+        return btn && btn.dataset.code?.trim();
+    });
 
-            if (validItemRows.length === 0) {
-                alert("Items found but no SKU data.");
-                return;
-            }
-        }
+    if (validItemRows.length === 0) {
+        alert("No data found. Please try again.");
+        return;
+    }
+}
 
-        // ✅ PASS
+
+
+
+        /* ✅ SKU export: DO NOT validate rows */
         this.submit();
     });
 });
+
 
 
 
@@ -1198,8 +1202,8 @@ searchBtn.addEventListener("click", () => {
 
 [itemCodeInput, itemNameInput].forEach(input => {
     input.addEventListener("input", () => {
-        if (!hasSearched) return;
-        if(!isExporting)return;
+        // if (!hasSearched) return;
+        // if(!isExporting)return;
 
         const itemCode = itemCodeInput.value.trim();
         const itemName = itemNameInput.value.trim();
@@ -1371,6 +1375,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+//Fixed Latest Code 28 Jan 2026
 </script>
 </body>
 </html>

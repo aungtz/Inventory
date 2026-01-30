@@ -171,64 +171,65 @@ tr:hover {
 
         <!-- SKU Details Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="p-4 border-b">
-                <h2 class="text-lg font-semibold text-gray-800">Imported SKUs</h2>
-            </div>
-           <div class="table-container">
-   <div class="table-container">
-    <table class="w-full table-fixed border-separate border-spacing-0">
-        <thead class="bg-gray-100 sticky top-0 z-20">
-            <tr>
-                <th class="p-3 text-left w-32">Item Code</th>
-                <th class="p-3 text-left w-20">Size</th>
-                <th class="p-3 text-left w-24">Color</th>
-                <th class="p-3 text-left w-24">Size Code</th>
-                <th class="p-3 text-left w-24">Color Code</th>
-                <th class="p-3 text-left w-40">JAN Code</th>
-                <th class="p-3 text-left w-20">Quantity</th>
-                <th class="p-3 text-left w-64">Error Message</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($items as $item)
-            <tr class="border-b hover:bg-gray-50">
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Code }}">
-                    <span class="truncate-text font-mono">{{ $item->Item_Code }}</span>
-                </td>
-                
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SizeName }}">
-                    <span class="truncate-text">{{ $item->SizeName }}</span>
-                </td>
+    <div class="p-4 border-b">
+        <h2 class="text-lg font-semibold text-gray-800">Imported SKUs</h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full min-w-[800px] border-separate border-spacing-0">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-3 text-left w-32">Item Code</th>
+                    <th class="p-3 text-left w-20">Size</th>
+                    <th class="p-3 text-left w-24">Color</th>
+                    <th class="p-3 text-left w-24">Size Code</th>
+                    <th class="p-3 text-left w-24">Color Code</th>
+                    <th class="p-3 text-left w-40">JAN Code</th>
+                    <th class="p-3 text-left w-20">Quantity</th>
+                    <th class="p-3 text-left w-64">Error Message</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach ($items as $item)
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" title="{{ $item->Item_Code }}">
+                        <span class="font-mono">{{ $item->Item_Code }}</span>
+                    </td>
+                    
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[5rem]" title="{{ $item->SizeName }}">
+                        <span>{{ $item->SizeName }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ColorName }}">
-                        <span class="truncate-text">{{ $item->ColorName }}</span>
-                </td>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[6rem]" title="{{ $item->ColorName }}">
+                        <span>{{ $item->ColorName }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SizeCode }}">
-                    <span class="truncate-text font-mono">{{ $item->SizeCode }}</span>
-                </td>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[6rem]" title="{{ $item->SizeCode }}">
+                        <span class="font-mono">{{ $item->SizeCode }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ColorCode }}">
-                    <span class="truncate-text font-mono">{{ $item->ColorCode }}</span>
-                </td>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[6rem]" title="{{ $item->ColorCode }}">
+                        <span class="font-mono">{{ $item->ColorCode }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->JanCD }}">
-                    <span class="truncate-text font-mono">{{ $item->JanCD }}</span>
-                </td>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[10rem]" title="{{ $item->JanCD }}">
+                        <span class="font-mono">{{ $item->JanCD }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Quantity }}">
-                    <span class="truncate-text">{{ $item->Quantity }}</span>
-                </td>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[5rem]" title="{{ $item->Quantity }}">
+                        <span>{{ $item->Quantity }}</span>
+                    </td>
 
-                <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Error_Msg }}">
-                    <span class="truncate-text font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
-                        {{ $item->Error_Msg }}
-                    </span>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[16rem]" title="{{ $item->Error_Msg }}">
+                        <span class="font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $item->Error_Msg }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
             
             <!-- Pagination -->
@@ -271,6 +272,6 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//sku fixed latest.
+//Fixed latest code  28 jan 2026
 </script>
 </html>

@@ -12,6 +12,8 @@ Route::get('/', [ItemController::class, 'itemList'])->name('itemList');
 Route::get('/items-create', [ItemController::class, 'create'])->name('items.create');
 Route::get('/import-log',[ImportLogController::class,'index'])->name('import.log');
 Route::get('/itemList',[ItemController::class,'itemList'])->name('itemList');
+Route::get('/skuList',[ItemController::class,'skuList'])->name('skuList');
+
 Route::post('/items', [ItemController::class, 'store'])->name('items.store');
 
 Route::get('/sku-master/import', [ImportLogController::class, 'importSkuPage'])->name('sku-master.import');
@@ -66,6 +68,8 @@ Route::post('/sku-import/validate', [ImportValidation::class, 'validateSkuImport
 Route::get('/import-log/{id}/sku-details', [ImportLogController::class, 'skuDetails'])->name('sku-details');
 Route::get('/import-log/{id}/item-errors', [ImportLogController::class, 'errorDetails'])->name('item-errors');
 Route::get('/import-log/{id}/sku-errors', [ImportLogController::class, 'skuErrorDetails'])->name('sku-errors');
+
+Route::post('/sku-update', [ItemController::class, 'updateStock'])->name('sku.updateStock');
 
 
 Route::get('/test-error', function() {

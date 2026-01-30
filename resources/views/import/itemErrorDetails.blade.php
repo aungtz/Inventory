@@ -163,8 +163,8 @@
                 <h2 class="text-lg font-semibold text-gray-800">Imported Items</h2>
             </div>
             
-            <div class="table-container">
-    <table class="w-full table-fixed border-separate border-spacing-0">
+            <div class="overflow-x-auto">
+    <table class="w-full min-w[800p] border-separate border-spacing-0">
                     <thead class="bg-gray-100 sticky-header">
                         <tr>
                             <th class="p-3 text-left font-medium text-gray-700">Item_Code</th>
@@ -178,50 +178,58 @@
 
                         </tr>
                     </thead>
-                @foreach($items as $item)
- <tr class="border-b hover:bg-gray-50">
-        <!-- Item_Code -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Code }}">
-            <span class="truncate-text font-mono">{{ $item->Item_Code }}</span>
-        </td>
-        
-        <!-- Item_Name -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Item_Name }}">
-            <span class="truncate-text">{{ $item->Item_Name }}</span>
-        </td>
+              @foreach($items as $item)
+<tr class="border-b hover:bg-gray-50">
+    <!-- Item_Code -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->Item_Code }}">
+        <span class="font-mono">{{ $item->Item_Code }}</span>
+    </td>
+    
+    <!-- Item_Name -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->Item_Name }}">
+        <span>{{ $item->Item_Name }}</span>
+    </td>
 
-        <!-- JanCD -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->JanCD }}">
-            <span class="truncate-text font-mono">{{ $item->JanCD }}</span>
-        </td>
+    <!-- JanCD -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->JanCD }}">
+        <span class="font-mono">{{ $item->JanCD }}</span>
+    </td>
 
-        <!-- MakerName -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->MakerName }}">
-            <span class="truncate-text">{{ $item->MakerName }}</span>
-        </td>
+    <!-- MakerName -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->MakerName }}">
+        <span>{{ $item->MakerName }}</span>
+    </td>
 
-        <!-- Memo -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Memo }}">
-            <span class="truncate-text">{{ $item->Memo }}</span>
-        </td>
+    <!-- Memo -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->Memo }}">
+        <span>{{ $item->Memo }}</span>
+    </td>
 
-        <!-- ListPrice -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->ListPrice }}">
-            <span class="truncate-text">{{ $item->ListPrice }}</span>
-        </td>
+    <!-- ListPrice -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->ListPrice }}">
+        <span>{{ $item->ListPrice }}</span>
+    </td>
 
-        <!-- SalePrice -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->SalePrice }}">
-            <span class="truncate-text">{{ $item->SalePrice }}</span>
-        </td>
+    <!-- SalePrice -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->SalePrice }}">
+        <span>{{ $item->SalePrice }}</span>
+    </td>
 
-        <!-- Error Message -->
-        <td class="p-3 tooltip-cell" data-tooltip="{{ $item->Error_Msg }}">
-            <span class="truncate-text font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
-                {{ $item->Error_Msg }}
-            </span>
-        </td>
-    </tr>
+    <!-- Error Message -->
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
+        title="{{ $item->Error_Msg }}">
+        <span class="font-semibold {{ $item->Status == 'Valid' ? 'text-green-600' : 'text-red-600' }}">
+            {{ $item->Error_Msg }}
+        </span>
+    </td>
+</tr>
 @endforeach
 </tbody>
                 </table>
@@ -266,6 +274,6 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//fixed latest
+//fixed latest  28 jan 2026
 </script>
 </html>

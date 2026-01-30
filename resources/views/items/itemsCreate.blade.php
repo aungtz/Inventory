@@ -678,7 +678,8 @@ errorText.innerText = "⚠️ This Item Code is already taken.";
         .catch(error => console.error('Error checking item code:', error));
     }
 });
+//Fixed Latest Code 26 Jan 26
 </script> 
-<!-- Fixed Latest Create Form -->
+
 </body>
 </html>

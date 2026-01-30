@@ -125,12 +125,7 @@
             </div>
 
             <div class="p-4 space-y-2 h-[calc(100vh-200px)] overflow-y-auto">
-                <a href="#" id="nav-dashboard" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
+             
 
                 <a href="/itemList" id="nav-items" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,6 +133,13 @@
                     </svg>
                     <span>Items</span>
                 </a>
+                 <a href="/skuList" id="nav-items" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span>SKU List</span>
+                </a>
+
 
                 <a href="/items-create" id="nav-create-items" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +193,12 @@
             </div>
 
             <div class="p-4 space-y-2 flex-1 overflow-y-auto">
-       
+       <a href="/skuList" id="nav-items" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span>SKU List</span>
+                </a>
                 <a href="/itemList" id="nav-items-desktop" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -296,9 +303,9 @@
         // Initialize navigation highlighting
         document.addEventListener('DOMContentLoaded', function() {
             const savedNav = sessionStorage.getItem('activeNav');
-            const navIds = ['nav-dashboard', 'nav-items', 'nav-create-items', 'nav-import'];
+            const navIds = ['nav-items', 'nav-create-items', 'nav-import'];
 
-            let activeIdToSet = 'nav-dashboard';
+            // let activeIdToSet = 'nav-dashboard';
 
             if (savedNav && (document.getElementById(savedNav) || document.getElementById(savedNav + '-desktop'))) {
                 activeIdToSet = savedNav;
@@ -336,6 +343,7 @@
                 }
             });
         });
+        //Fixed Latest Code 26 Jan 26
     </script>
 </body>
 </html>

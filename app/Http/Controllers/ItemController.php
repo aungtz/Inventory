@@ -172,6 +172,19 @@ public function itemList(Request $request)
     // Pass sort parameters to view
     return view('items.itemList', compact('items', 'images', 'skuMatrixByItem', 'sort', 'direction'));
 }
+
+
+public function skuList()
+    {
+       
+        $skus = DB::table('M_SKU')->get();
+
+        // Option B: If you want to filter by a specific item from a request
+        // $itemCode = request('item_code');
+        // $skus = DB::table('M_SKU')->where('Item_Code', $itemCode)->get();
+
+        return view("items.skuList", compact('skus'));
+    }
 public function getSkuMatrix(Request $request)
 {
     $itemCode = $request->item_code;
@@ -207,7 +220,60 @@ public function getSkuMatrix(Request $request)
 }
 
 
+public function updateStock(Request $request)
+{
+    $quantities = $request->input('quantities');
 
+    if (!$quantities || count($quantities) === 0) {
+        Log::warning('UpdateStock: No quantities submitted', [
+            'request_quantities' => $quantities,
+            'user_id' => auth()->id(),
+        ]);
+
+        return back()->with('error', 'Please check at least one item to update.');
+    }
+
+    try {
+        DB::beginTransaction();
+
+        Log::info('UpdateStock started', [
+            'count' => count($quantities),
+            'user_id' => auth()->id(),
+        ]);
+
+        foreach ($quantities as $adminCode => $quantity) {
+            Log::info('Updating SKU stock', [
+                'Item_AdminCode' => $adminCode,
+                'Quantity' => $quantity,
+            ]);
+
+            DB::table('M_SKU')
+                ->where('Item_AdminCode', $adminCode)
+                ->update([
+                    'Quantity'   => $quantity,
+                    'UpdatedDate' => now()
+                ]);
+        }
+
+        DB::commit();
+
+        Log::info('UpdateStock committed successfully', [
+            'updated_rows' => count($quantities),
+        ]);
+
+        return back()->with('success', 'Successfully updated ' . count($quantities) . ' items.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        Log::error('UpdateStock failed', [
+            'message' => $e->getMessage(),
+            'trace'   => $e->getTraceAsString(),
+        ]);
+
+        return back()->with('error', 'Update failed: ' . $e->getMessage());
+    }
+}
 
 
 public function update(Request $request, $id)
@@ -662,6 +728,8 @@ public function itemSelectDelete(Request $request)
     }
 
 
+
+    
     public function export(Request $request)
 {
     $itemCode = trim($request->query('item_code'));
@@ -683,9 +751,10 @@ public function itemSelectDelete(Request $request)
             $itemCode = implode(',', $itemCodes);
         }
 
-        if (!$itemCode) {
-            return back()->with('error', 'Item Code is required to export SKU.');
-        }
+        // if (!$itemCode) {
+        //     return back()->with('error', 'Item Code is required to export SKU.');
+        //     \Log('item code is required to export sku');
+        // }
     }
 
     // Validation query
