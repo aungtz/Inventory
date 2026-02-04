@@ -1139,12 +1139,7 @@ console.log("viewType =", viewType);
         alert("No data found. Please try again.");
         return;
     }
-}
-
-
-
-
-        /* ✅ SKU export: DO NOT validate rows */
+}  /* ✅ SKU export: DO NOT validate rows */
         this.submit();
     });
 });
@@ -1184,7 +1179,7 @@ const itemCodeInput = document.getElementById("itemCodeSearch");
 const itemNameInput = document.getElementById("itemNameSearch");
 const searchBtn = document.getElementById("searchButton");
 
-
+let hasTyped = false;
 let hasSearched = false;
 
 searchBtn.addEventListener("click", () => {
@@ -1196,13 +1191,15 @@ searchBtn.addEventListener("click", () => {
         return;
     }
 
+     hasTyped = true;
     hasSearched = true;
     executeSearch();
 });
 
+
 [itemCodeInput, itemNameInput].forEach(input => {
     input.addEventListener("input", () => {
-        // if (!hasSearched) return;
+        //  if (!hasSearched) return;
         // if(!isExporting)return;
 
         const itemCode = itemCodeInput.value.trim();
@@ -1211,18 +1208,34 @@ searchBtn.addEventListener("click", () => {
         if (!itemCode && !itemName) {
             window.location.reload();
         }
+         hasTyped = !!(itemCode || itemName);
+
+        // If user changes input after searching → require search again
+        if (hasTyped) {
+            hasSearched = false;
+        }
+    });
+});
+document.querySelectorAll(".export-form").forEach(form => {
+    form.addEventListener("submit", (event) => {
+
+        // ❌ Typed but did not search
+        if (hasTyped && !hasSearched) {
+            event.preventDefault();
+            alert("Please click Search before exporting.");
+        }
+
+        // ✅ All other cases → allow export
     });
 });
 
 
-// Button search (always works)
-
+    let issearch = false;
 
 function executeSearch() {
     const itemCode = document.getElementById("itemCodeSearch").value.trim();
     const itemName = document.getElementById("itemNameSearch").value.trim();
     const isLive   = document.getElementById("liveSearchCheckbox").checked ? 1 : 0;
-
     // Nothing to search
     if (!itemCode && !itemName) {
         window.location.reload();
@@ -1375,7 +1388,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-//Fixed Latest Code 28 Jan 2026
+
+
+//04-feb-2026 Fixed Update
 </script>
 </body>
 </html>

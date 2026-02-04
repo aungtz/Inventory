@@ -412,7 +412,7 @@
 </td>
 
 <!-- JanCD -->
-<td class="p-4 font-mono">
+<td class=" font-mono w-36 min-w-[140px]">
     <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
           title="${row.JanCD || '-'}">
         ${row.JanCD || "-"}
@@ -564,7 +564,7 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//fixed latest 28 jan 2026
+//04-feb-2026 Fixed Update
     </script>
 </body>
 </html>

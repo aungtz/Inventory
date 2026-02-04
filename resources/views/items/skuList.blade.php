@@ -103,167 +103,136 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
 <!-- Header - Main container with flex-wrap -->
-<div class="flex flex-wrap justify-between items-start gap-y-4 gap-x-6 mb-6">
-    <!-- Search Section - Now can wrap properly -->
-    <div class="flex-1 min-w-[300px] lg:min-w-[500px] xl:min-w-[600px]">
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
-            <!-- Live Search Checkbox -->
-            <div class="flex items-center space-x-2 shrink-0">
-                <input 
-                    type="checkbox" 
-                    id="liveSearchCheckbox" 
-                    name="live_search"
-                    checked
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                >
-                <label for="liveSearchCheckbox" class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                    Like Search
-                </label>
+<div class="flex flex-wrap justify-between items-start gap-y-4 gap-x-6 mb-6"><!-- Search and Actions Section -->
+<div class="flex flex-col xl:flex-row gap-4 xl:gap-6 items-start xl:items-center w-full">
+    <!-- Search Section -->
+    <div class="flex flex-col xl:flex-row gap-4 xl:gap-6 items-stretch xl:items-center w-full bg-white p-4">
+    <div class="flex-[3] min-w-0">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+            <div class="flex items-center space-x-2 shrink-0 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 h-[42px]">
+                <input type="checkbox" id="liveSearchCheckbox" checked class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                <label for="liveSearchCheckbox" class="text-sm font-medium text-gray-700 whitespace-nowrap">Live Search</label>
             </div>
 
-            <!-- Search textareas with button -->
-            <div class="flex-1 min-w-0 w-full">
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-3 w-full">
-                    <!-- Textareas container with enforced minimum -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 min-w-0 w-full min-w-[300px]">
-                        <!-- Item Code Search -->
-                        <div class="relative min-w-0">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <!-- <i class="fas fa-hashtag text-gray-400 text-sm"></i> -->
-                            </div>
-                            <textarea 
-                                id="itemCodeSearch"
-                                name="item_code_search"
-                                placeholder="Item Code Search"
-                                rows="1"
-                                class="w-full min-w-[140px] pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 resize-y text-sm min-h-[42px]"
-                            ></textarea>
-                        </div>
-                        
-                        <!-- Item Name Search -->
-                        <div class="relative min-w-0">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <!-- <i class="fas fa-tag text-gray-400 text-sm"></i> -->
-                            </div>
-                            <textarea 
-                                id="itemNameSearch"
-                                name="item_name_search"
-                                placeholder="Item Name Search"
-                                rows="1"
-                                class="w-full min-w-[140px] pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 resize-y text-sm min-h-[42px]"
-                            ></textarea>
-                        </div>
-                    </div>
-                    
-                    <!-- Search Button -->
-                    <div class="shrink-0">
-                        <button 
-                            type="button"
-                            id="searchButton"
-                            class="px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center justify-center whitespace-nowrap h-[42px] w-full md:w-auto"
-                        >
-                            <i class="fas fa-search"></i>
-                            <span class="hidden md:inline ml-2">Search</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 flex-1">
+    <div class="relative">
+        <input
+            id="itemCodeSearch"
+            type="text"
+            placeholder="Item Code"
+            class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
+        >
     </div>
 
-    <!-- Action Buttons Section - Will wrap when needed -->
-    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center shrink-0">
-        <!-- View Type Toggle -->
-        <!-- <div class="flex items-center space-x-2 bg-gray-100 rounded-lg p-1 shrink-0">
-            <button 
-                type="button"
-                id="itemViewBtn"
-                class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-white text-gray-800 shadow-sm"
-                onclick="setViewType('item')"
-            >
-                <i class="fas fa-cube mr-1"></i>
-                Item
-            </button>
-            <button 
-                type="button"
-                id="skuViewBtn"
-                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-800"
-                onclick="setViewType('sku')"
-            >
-                <i class="fas fa-boxes mr-1"></i>
-                SKU
-            </button>
-            <input type="hidden" id="viewTypeInput">
-        </div> -->
+    <div class="relative">
+        <input
+            id="itemNameSearch"
+            type="text"
+            placeholder="Item Name"
+            class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
+        >
+    </div>
 
-        <!-- Export & Action Buttons Group -->
-        <div class="flex flex-col sm:flex-row gap-4">
-            <!-- Export Buttons Group -->
-            <div class="flex gap-2">
-                <!-- Excel Export Form -->
-                <form id="exportForm" method="GET" action="/items/export" class="export-form">
-                    <input type="hidden" name="view_type" id="excelExportViewType" value="sku">
-                    <input type="hidden" name="format" value="excel">
-                    <button 
-                        type="submit"
-                        class="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center shrink-0"
-                    >
-                        <i class="fas fa-file-excel mr-2 text-green-600"></i>
-                        <span>Excel</span>
-                    </button>
-                </form>
-                
-                <!-- CSV Export Form -->
-                <form id="csvExportForm" method="GET" action="/items/export" class="export-form">
-                    <input type="hidden" name="view_type" id="csvExportViewType" value="sku">
-                    <input type="hidden" name="format" value="csv">
-                    <button 
-                        type="submit"
-                        class="px-4 py-2.5 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition flex items-center justify-center shrink-0"
-                    >
-                        <i class="fas fa-file-csv mr-2 text-blue-600"></i>
-                        <span>CSV</span>
-                    </button>
-                </form>
-            </div>
+    <div class="relative">
+        <input
+            id="janCodeSearch"
+            type="text"
+            placeholder="JAN Code"
+            class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
+        >
+    </div>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-2">
-                <!-- Delete Button -->
-                <button 
-                    id="deleteSelectedBtn" 
-                    class="px-4 py-2.5 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center shrink-0"
-                >
-                    <i class="fas fa-trash mr-2"></i>
-                    <span class="hidden sm:inline">Delete Selected</span>
-                    <span class="sm:hidden">Delete</span>
-                </button>
-                
-                <!-- Create New Button -->
-                <a href="/items-create" class="shrink-0">
-                    <button 
-                        class="px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center justify-center shrink-0"
-                    >
-                        <i class="fas fa-plus mr-2"></i>
-                        <span class="hidden sm:inline">Create New</span>
-                        <span class="sm:hidden">New</span>
-                    </button>
-                </a>
-               <form action="{{ route('sku.updateStock') }}" method="POST">
-             @csrf
-             {{-- Your existing Update Button --}}
-            <div class="mb-4 flex justify-end">
-                <button type="submit" class="px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center shadow-md">
-                    <i class="fas fa-save mr-2"></i>
-                    <span>Update Stock</span>
-                </button>
-            </div>
-   
-            </div>
-        </div>
+    <div class="relative">
+        <input
+            id="adminCodeSearch"
+            type="text"
+            placeholder="AdminCode"
+            class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
+        >
     </div>
 </div>
 
+            
+          <button onclick="executeSkuSearch()" class="searchButton lg:w-32 h-[42px] bg-blue-600 text-white rounded-lg" id="searchButton">
+    <i class="fas fa-search mr-2"></i> Search
+</button>
+
+        </div>
+    </div>
+
+    
+</div>
+
+    <!-- Actions Section -->
+    <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center shrink-0 w-full sm:w-auto min-w-0">
+        <!-- Export Buttons -->
+        <div class="flex gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200 w-full sm:w-auto justify-center sm:justify-start min-w-0">
+            <!-- Excel Export -->
+            <form id="exportForm" method="GET" action="/items/export" class="export-form shrink-0">
+                <input type="hidden" name="view_type" id="excelExportViewType" value="sku">
+                <input type="hidden" name="format" value="excel">
+                <button 
+                    type="submit"
+                    class="px-4 py-2 bg-white text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-all duration-200 flex items-center justify-center shrink-0 border border-gray-300 hover:border-gray-400 min-w-[40px] lg:min-w-[80px]"
+                    title="Export to Excel"
+                >
+                    <i class="fas fa-file-excel text-green-600 text-sm"></i>
+                    <span class="ml-2 hidden lg:inline text-sm">Excel</span>
+                </button>
+            </form>
+            
+            <!-- CSV Export -->
+            <form id="csvExportForm" method="GET" action="/items/export" class="export-form shrink-0">
+                <input type="hidden" name="view_type" id="csvExportViewType" value="sku">
+                <input type="hidden" name="format" value="csv">
+                <button 
+                    type="submit"
+                    class="px-4 py-2 bg-white text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-all duration-200 flex items-center justify-center shrink-0 border border-gray-300 hover:border-gray-400 min-w-[40px] lg:min-w-[80px]"
+                    title="Export to CSV"
+                >
+                    <i class="fas fa-file-csv text-blue-600 text-sm"></i>
+                    <span class="ml-2 hidden lg:inline text-sm">CSV</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-2 w-full sm:w-auto justify-center sm:justify-start min-w-0 flex-wrap">
+            <!-- Delete Button -->
+            <button 
+                id="deleteSelectedBtn" 
+                class="px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-lg hover:from-red-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm hover:shadow min-w-[100px] sm:min-w-[120px]"
+            >
+                <i class="fas fa-trash text-sm"></i>
+                <span class="ml-2 text-sm">Delete</span>
+            </button>
+            
+            <!-- Create New Button -->
+            <a href="/items-create" class="shrink-0">
+                <button 
+                    class="px-4 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm hover:shadow min-w-[100px] sm:min-w-[120px]"
+                >
+                    <i class="fas fa-plus text-sm"></i>
+                    <span class="ml-2 text-sm hidden sm:inline">New Item</span>
+                    <span class="ml-2 text-sm sm:hidden">New</span>
+                </button>
+            </a>
+
+            <!-- Update Stock Button -->
+            <form action="{{ route('sku.updateStock') }}" method="POST" class="shrink-0" id="updateStockForm">
+                @csrf
+                <button 
+                    type="submit" 
+                    class="px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm hover:shadow min-w-[100px] sm:min-w-[130px]"
+                >
+                    <i class="fas fa-save text-sm"></i>
+                    <span class="ml-2 text-sm hidden sm:inline">Update Stock</span>
+                    <span class="ml-2 text-sm sm:hidden">Stock</span>
+                </button>
+            
+        </div>
+    </div>
+</div>
 
         <!-- Table -->
      <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-200">
@@ -274,8 +243,48 @@
             <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12">
                 <input type="checkbox" id="check-all-sku" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
             </th>
-            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Item Code</th>
-            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan Code</th>
+ <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">
+                            @php
+                                // Get current sort parameters
+                                $currentSort = request('sort');
+                                $currentDirection = request('direction', 'asc');
+                                
+                                // Build URL for Item Code sorting
+                                if ($currentSort === 'item_code') {
+                                    // Same column clicked - toggle direction
+                                    $newDirection = $currentDirection === 'asc' ? 'desc' : 'asc';
+                                    $sortUrl = url()->current() . '?' . http_build_query([
+                                        'sort' => 'item_code',
+                                        'direction' => $newDirection
+                                    ]);
+                                } else {
+                                    // Different column - start with ascending
+                                    $sortUrl = url()->current() . '?' . http_build_query([
+                                        'sort' => 'item_code',
+                                        'direction' => 'asc'
+                                    ]);
+                                }
+                                
+                                // Determine icon color
+                                $iconClass = $currentSort === 'item_code' ? 'text-blue-600' : 'text-gray-400';
+                                
+                                // Determine icon path
+                                if ($currentSort === 'item_code') {
+                                    $iconPath = $currentDirection === 'asc' 
+                                        ? 'M7 16V4m0 0L3 8m4-4l4 4m10 4V20m0 0l4-4m-4 4l-4-4'  // Ascending
+                                        : 'M7 4V16m0 0L3 12m4 4l4-4m10 12V8m0 0l-4 4m4-4l4 4'; // Descending
+                                } else {
+                                    $iconPath = 'M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4'; // Neutral
+                                }
+                            @endphp
+                            
+                            <a href="{{ $sortUrl }}" class="flex items-center justify-between hover:text-blue-600 transition-colors duration-200">
+                                <span>Item Code</span>
+                                <svg class="h-4 w-4 {{ $iconClass }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $iconPath }}"></path>
+                                </svg>
+                            </a>
+                        </th>            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan Code</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Size</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Color</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">Size CD</th>
@@ -291,7 +300,7 @@
              <td class="px-4 py-4 whitespace-nowrap">
         <input type="checkbox" 
                class="sku-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-               onchange="toggleEdit(this)" value{{ $sku->Item_AdminCode }}>
+               onchange="toggleEdit(this)" value="{{ $sku->Item_AdminCode }}">
     </td>
                 
                 <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -424,7 +433,9 @@ name="quantities[{{ $sku->Item_AdminCode }}]"
         </div>
     </div>
 </div>
-
+  @if($skus->hasPages() || $skus->total() > 0)
+                <x-pagination :paginator="$skus" label="sku" />
+            @endif
     <!-- JavaScript for functionality -->
 <script>
 function toggleEdit(checkbox) {
@@ -450,6 +461,344 @@ document.getElementById('check-all-sku')?.addEventListener('change', function() 
         toggleEdit(cb); // Trigger the input enable/disable logic
     });
 });
+
+
+
+
+document.getElementById('deleteSelectedBtn').addEventListener('click', async function() {
+    // 1. Collect all checked ItemAdminCodes
+    const selectedCheckboxes = document.querySelectorAll('.sku-checkbox:checked');
+    const adminCodes = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+    // 2. Validation: Don't do anything if nothing is selected
+    if (adminCodes.length === 0) {
+        alert('Please select at least one item to delete.');
+        return;
+    }
+
+    // 3. Confirmation
+    if (!confirm(`Are you sure you want to delete ${adminCodes.length} items?`)) {
+        return;
+    }
+
+    try {
+        // 4. The Backend Call
+const response = await fetch("{{ route('skus.deleteByAdminCode') }}", {            method: 'POST', // Or 'DELETE' if your route is defined as Route::delete
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                'itemAdmin-codes': adminCodes // This matches your PHP $request->input('itemAdmin-codes')
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert(result.message);
+            // Optional: Refresh the page or remove the rows from the DOM
+            location.reload(); 
+        } else {
+            alert('Error: ' + result.message);
+        }
+
+    } catch (error) {
+        console.error('Error during deletion:', error);
+        alert('An unexpected error occurred.');
+    }
+});
+
+
+function getSkuSearchParams() {
+    return {
+        item_code: document.getElementById("itemCodeSearch").value.trim(),
+        item_name: document.getElementById("itemNameSearch").value.trim(),
+        jan_code: document.getElementById("janCodeSearch").value.trim(),
+        item_admin_code: document.getElementById("adminCodeSearch").value.trim(),
+        live: document.getElementById("liveSearchCheckbox").checked ? 1 : 0
+    };
+}
+
+
+function executeSkuSearch() {
+    const paramsObj = getSkuSearchParams();
+
+    // If all empty → do nothing
+    if (
+        !paramsObj.item_code &&
+        !paramsObj.item_name &&
+        !paramsObj.jan_code &&
+        !paramsObj.item_admin_code
+    ) {
+        return;
+    }
+
+    // paginationWrapper.style.display = "none";
+
+    const params = new URLSearchParams(paramsObj);
+
+    fetch(`/sku/search?${params.toString()}`)
+        .then(res => res.json())
+        .then(data => {
+            renderSkuRows(data);
+        })
+        .catch(err => console.error("SKU search error:", err));
+}
+const tableBody = document.querySelector('#skuTableBody')
+function renderSkuRows(items) {
+    tableBody.innerHTML = "";
+
+    if (!items || items.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-6 text-gray-500">
+                    No SKU found
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    items.forEach(item => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-gray-50";
+
+    row.innerHTML = `
+<form action="/sku/updateStock" method="POST" class="shrink-0">
+    <td class="px-4 py-4 whitespace-nowrap">
+        <input type="checkbox" 
+               class="sku-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+               onchange="toggleEdit(this)" value="${item.Item_AdminCode}">
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        <div class="truncate" title="${item.Item_Code}">
+            <a href="/items/${item.Item_Code}/edit" class="text-blue-600 hover:underline">
+                ${item.Item_Code}
+            </a>
+        </div>
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+        ${item.JanCode ?? '-'}
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">
+        <div class="truncate" title="${item.Size_Name}">
+            ${item.Size_Name}
+        </div>
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">
+        <div class="flex items-center">
+            <div class="truncate" title="${item.Color_Name}">
+                ${item.Color_Name}
+            </div>
+        </div>
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-400">
+        ${item.Size_Code}
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-400">
+        ${item.Color_Code}
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-center">
+        ${parseInt(item.Quantity) > 0 
+            ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">In Stock</span>'
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Out</span>'}
+    </td>
+
+    <td class="px-3 py-4 whitespace-nowrap text-right">
+        <input type="number" 
+               name="quantities[${item.Item_AdminCode}]"
+               value="${item.Quantity}" 
+               disabled
+               class="qty-input w-24 px-2 py-1 text-right border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:bg-transparent disabled:border-transparent transition-all font-bold ${parseInt(item.Quantity) <= 0 ? 'text-red-500' : 'text-gray-900'}"
+               min="0">
+    </td>
+</form>
+`;
+
+
+
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+const itemCodeInput = document.getElementById("itemCodeSearch");
+const itemNameInput = document.getElementById("itemNameSearch");
+const JanCodeInput =document.getElementById("janCodeSearch")
+const adminCodeInput = document.getElementById("adminCodeSearch");
+const searchBtn = document.getElementById("searchButton");
+
+let hasTyped = false;
+let hasSearched = false;
+
+searchBtn.addEventListener("click", () => {
+    const itemCode = itemCodeInput.value.trim();
+    const itemName = itemNameInput.value.trim();
+    const jancode = JanCodeInput.value.trim();
+    const adminCode = adminCodeInput.value.trim();
+
+
+
+    if (!itemCode && !itemName && !jancode && !adminCode) {
+        window.location.reload();
+        return;
+    }
+
+   hasTyped = true;
+    hasSearched = true;
+        executeSkuSearch(); // 🔥 REQUIRED
+
+});
+
+[
+    document.getElementById("itemCodeSearch"),
+    document.getElementById("itemNameSearch"),
+    document.getElementById("janCodeSearch"),
+    document.getElementById("adminCodeSearch")
+].forEach(input => {
+    input.addEventListener("input", () => {
+        //  if (!hasSearched) return;
+        // if(!isExporting)return;
+
+        const itemCode = itemCodeInput.value.trim();
+        const itemName = itemNameInput.value.trim();
+         const jancode = JanCodeInput.value.trim();
+    const adminCode = adminCodeInput.value.trim();
+
+    if (!itemCode && !itemName && !jancode && !adminCode) {
+            window.location.reload();
+        }
+        hasTyped = !!(itemCode || itemName);
+
+        // If user changes input after searching → require search again
+        if (hasTyped) {
+            hasSearched = false;
+        }
+    });
+
+});
+document.querySelectorAll(".export-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+        // typed but not searched
+        if (hasTyped && !hasSearched) {
+            e.preventDefault();
+            alert("Please click Search before exporting.");
+            return;
+        }
+
+        const rows = document.querySelectorAll("#skuTableBody tr");
+        if (rows.length === 0) {
+            e.preventDefault();
+            alert("No data found to export.");
+            return;
+        }
+    });
+});
+
+
+document.querySelectorAll(".export-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+
+        const itemCode = document.getElementById("itemCodeSearch")?.value.trim() || "";
+        const itemName = document.getElementById("itemNameSearch")?.value.trim() || "";
+        const live     = document.getElementById("liveSearchCheckbox")?.checked ? 1 : 0;
+
+        upsertHidden(this, "item_code", itemCode);
+        upsertHidden(this, "item_name", itemName);
+        upsertHidden(this, "live", live);
+
+        const rows = document.querySelectorAll("#skuTableBody tr");
+        const visibleRows = Array.from(rows).filter(row =>
+            row.offsetWidth > 0 && row.offsetHeight > 0
+        );
+
+        /* ✅ ITEM export validation */
+      
+    // ITEM export needs table rows
+    if (visibleRows.length === 0) {
+        alert("No data found to export.");
+        return;
+    }
+
+   const validSkuRows = visibleRows.filter(row => {
+    const checkbox = row.querySelector(".sku-checkbox");
+    return checkbox && checkbox.value?.trim();
+});
+
+
+    if (validSkuRows.length === 0) {
+        alert("No data found. Please try again.");
+        return;
+    }
+
+        this.submit();
+    });
+});
+
+function upsertHidden(form, name, value) {
+    let input = form.querySelector(`input[name="${name}"]`);
+    if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        form.appendChild(input);
+    }
+    input.value = value;
+}
+
+
+document.getElementById("searchButton")?.addEventListener("click", () => {
+    const itemCode  = document.getElementById("itemCodeSearch")?.value.trim();
+    const itemName  = document.getElementById("itemNameSearch")?.value.trim();
+    const janCode   = document.getElementById("janCodeSearch")?.value.trim();
+    const adminCode = document.getElementById("adminCodeSearch")?.value.trim();
+
+    if (!itemCode && !itemName && !janCode && !adminCode) {
+        return;
+    }
+
+    skuHasTyped = true;
+    skuHasSearched = true;
+
+    executeSkuSearch();
+});
+const updateStockForm = document.getElementById('updateStockForm');
+
+updateStockForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // prevent default submit
+
+    // Remove previous hidden inputs added dynamically
+    updateStockForm.querySelectorAll('input[name^="quantities"]').forEach(input => input.remove());
+
+    // Find all quantity inputs from table
+    const qtyInputs = document.querySelectorAll('.qty-input');
+
+    qtyInputs.forEach(input => {
+        if (!input.disabled) {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = input.name; // quantities[Item_AdminCode]
+            hidden.value = input.value;
+            updateStockForm.appendChild(hidden);
+        }
+    });
+
+    // Submit the form
+    this.submit();
+});
+
+
 </script>
 </body>
 </html>

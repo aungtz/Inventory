@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemImportDataLog extends Model
 {
     protected $table = 'item_import_data_logs';
+protected $dateFormat = 'Y-m-d H:i:s';
 
     protected $fillable = [
         'ImportLog_ID',
@@ -23,9 +24,14 @@ class ItemImportDataLog extends Model
         'Color_Code',
         'JanCode',
         'Quantity',
+       
     ];
+    protected $casts = [
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+];
 
-    public $timestamps = false;
+    public $timestamps = true;
     public function log()
     {
         return $this->belongsTo(ItemImportLog::class, 'ImportLog_ID', 'ImportLog_ID');

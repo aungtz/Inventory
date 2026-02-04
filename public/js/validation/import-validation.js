@@ -132,7 +132,7 @@ function validateImportedRows(rows) {
         } else if (Item_Name && exceedsByteLength(Item_Name, ITEM_LENGTH_MAP.Item_Name)) {
                 errors.push(`Item_Name exceeds DB max length (${ITEM_LENGTH_MAP.Item_Name})`);
             }
-            else if (spaceRegex.test(Item_Name)) errors.push("Item_Name cannot contain spaces");
+            // else if (spaceRegex.test(Item_Name)) errors.push("Item_Name cannot contain spaces");
 
         // -------------------------
         // 3. JanCD
@@ -573,4 +573,4 @@ function getStringByteLength(str) {
 }
 
 
-//Fixed Latest Codes 26 Jan 2026
+            //04-feb-2026 Fixed Update

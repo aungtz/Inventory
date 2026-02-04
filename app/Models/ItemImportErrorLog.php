@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemImportErrorLog extends Model
 {
     protected $table = 'item_import_error_logs';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     protected $fillable = [
         'ImportLog_ID',
@@ -26,7 +27,7 @@ class ItemImportErrorLog extends Model
         'Error_Msg',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
    public function log()
     {

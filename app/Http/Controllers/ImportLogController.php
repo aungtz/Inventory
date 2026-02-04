@@ -35,7 +35,7 @@ class ImportLogController extends Controller
             $log = ItemImportLog::findOrFail($id);
 
             $items = ItemImportDataLog::where('ImportLog_ID', $id)->paginate(10);
-
+            
             foreach ($items as $row) {
                 $row->Status = 'Valid';
                 $row->Error_Msg = null;
@@ -44,6 +44,7 @@ class ImportLogController extends Controller
                 $row->JanCD     = $row->JanCD ?? $row->JanCode ?? null;
             }
             \Log::info($items);
+            // dd($items);
             return view('import.itemDetails', compact('log', 'items'));
         }                       
 

@@ -174,17 +174,54 @@ public function itemList(Request $request)
 }
 
 
-public function skuList()
-    {
-       
-        $skus = DB::table('M_SKU')->get();
+public function skuList(Request $request)
+{
+    $sort      = $request->query('sort');        // item_code
+    $direction = $request->query('direction', 'asc');
 
-        // Option B: If you want to filter by a specific item from a request
-        // $itemCode = request('item_code');
-        // $skus = DB::table('M_SKU')->where('Item_Code', $itemCode)->get();
+    $query = DB::table('M_SKU');
 
-        return view("items.skuList", compact('skus'));
+    if ($sort === 'item_code') {
+        $query->orderByRaw("
+            CASE 
+                WHEN Item_Code LIKE '%[0-9]%' AND CHARINDEX('-', Item_Code) > 0
+                THEN LEFT(Item_Code, CHARINDEX('-', Item_Code) - 1)
+                WHEN Item_Code LIKE '%[0-9]%'
+                THEN LEFT(Item_Code, PATINDEX('%[0-9]%', Item_Code) - 1)
+                ELSE Item_Code
+            END {$direction},
+            CASE 
+                WHEN Item_Code LIKE '%[0-9]%' AND CHARINDEX('-', Item_Code) > 0
+                THEN TRY_CAST(SUBSTRING(
+                    Item_Code,
+                    CHARINDEX('-', Item_Code) + 1,
+                    LEN(Item_Code)
+                ) AS INT)
+                WHEN Item_Code LIKE '%[0-9]%'
+                THEN TRY_CAST(SUBSTRING(
+                    Item_Code,
+                    PATINDEX('%[0-9]%', Item_Code),
+                    LEN(Item_Code)
+                ) AS INT)
+                ELSE 0
+            END {$direction},
+            Item_Code {$direction}
+        ");
+    } else {
+        $query->orderBy('UpdatedDate', 'desc');
     }
+
+    $skus = $query->paginate(10)->withQueryString();
+
+    \Log::info('SKU pagination', [
+        'page' => $skus->currentPage(),
+        'sort' => $sort,
+        'dir'  => $direction
+    ]);
+
+    return view('items.skuList', compact('skus', 'sort', 'direction'));
+}
+
 public function getSkuMatrix(Request $request)
 {
     $itemCode = $request->item_code;
@@ -675,6 +712,32 @@ public function destroySku(Request $request)
     }
 }
 
+public function destroyByItemAdminCode(Request $request)
+{
+    try {
+        // Expecting an array of strings: ['ITEM001', 'ITEM002']
+        $itemCodesToDelete = $request->input('itemAdmin-codes');
+
+        if (empty($itemCodesToDelete) || !is_array($itemCodesToDelete)) {
+            return response()->json(['success' => false, 'message' => 'No item codes provided'], 400);
+        }
+
+        // Single Query: Deletes all SKUs where Item_Code is in the list
+        $deletedCount = \DB::table('M_SKU')
+            ->whereIn('Item_AdminCode', $itemCodesToDelete)
+            ->delete();
+
+            
+        return response()->json([
+            'success' => true, 
+            'message' => 'Items and their associated SKUs deleted',
+            'deleted_rows' => $deletedCount
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
 
 public function itemSelectDelete(Request $request)
     {
@@ -859,8 +922,51 @@ public function search(Request $request)
     return response()->json($items);
 }
 
+public function searchSku(Request $request)
+{
+    $itemCode   = trim($request->query('item_code', ''));
+    $itemName   = trim($request->query('item_name', ''));
+    $janCode    = trim($request->query('jan_code', ''));
+    $adminCode  = trim($request->query('item_admin_code', ''));
+    $isLive     = (int) $request->query('live', 1); // 1 = LIKE, 0 = EXACT
+
+    // If all inputs empty → return empty
+    if ($itemCode === '' && $itemName === '' && $janCode === '' && $adminCode === '') {
+        return response()->json([]);
+    }
+    \Log::info('SKU SEARCH - Raw Request', [
+    'item_code'       => $request->query('item_code'),
+    'item_name'       => $request->query('item_name'),
+    'jan_code'        => $request->query('jan_code'),
+    'item_admin_code' => $request->query('item_admin_code'),
+    'live'            => $request->query('live'),
+]);
+
+
+    $items = DB::select(
+        'EXEC M_ItemSearching_SKU
+            @Item_Code      = ?,
+            @Item_Name      = ?,
+            @JanCode        = ?,
+            @Item_AdminCode = ?,
+            @IsLiveSearch   = ?',
+        [
+            $itemCode   ?: null,
+            $itemName   ?: null,
+            $janCode    ?: null,
+            $adminCode  ?: null,
+            $isLive
+        ]
+    );
+
+    return response()->json($items);
+}
+
+
+
 
 }
+//04-feb-2026 Fixed Update
 
 
 

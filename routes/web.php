@@ -75,3 +75,9 @@ Route::post('/sku-update', [ItemController::class, 'updateStock'])->name('sku.up
 Route::get('/test-error', function() {
     throw new \Exception("My First SQL Error Log!");
 });
+Route::post('/skus/delete-by-admin-code', [ItemController::class, 'destroyByItemAdminCode'])
+    ->name('skus.deleteByAdminCode');
+
+    Route::get('/sku/search', action: [ItemController::class, 'searchSku'])->name('sku.search');
+
+    //04-feb-2026 Fixed Update

@@ -136,23 +136,25 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <p class="text-sm text-gray-600">Total Items</p>
-                    <p class="text-lg font-semibold">{{ $items->count() }}</p>
+                    <p class="text-lg font-semibold">{{ $items->total() }}</p>
                     </div>
-                    <!-- <div>
+                    <div>
                         <p class="text-sm text-gray-600">Import Status</p>
-                        <p class="text-lg font-semibold text-green-600">{{ $log->Import_Status }}</p>
+                        <p class="text-lg font-semibold text-green-600">Items</p>
 
-                    </div> -->
+                    </div>
                     <div>
                         <p class="text-sm text-gray-600">Imported By</p>
                         <p class="text-lg font-semibold">{{ $log->Imported_By }}</p>
 
                     </div>
-                        <!-- <div>
-                            <p class="text-sm text-gray-600">File Name</p>
-                            <p class="text-lg font-semibold">{{ $log->File_Name }}</p>
-
-                        </div> -->
+                      
+                          <div>
+                        <p class="text-sm text-gray-600">Created At</p>
+                <p class="text-lg font-semibold">
+                    {{ $log->Imported_Date?->format('Y-m-d H:i') ?? '-' }}
+                </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,7 +167,7 @@
             
             <div class="overflow-x-auto">
     <table class="w-full min-w[800p] border-separate border-spacing-0">
-                    <thead class="bg-gray-100 sticky-header">
+                    <thead class="bg-gray-100 ">
                         <tr>
                             <th class="p-3 text-left font-medium text-gray-700">Item_Code</th>
                             <th class="p-3 text-left font-medium text-gray-700">Item_Name</th>
@@ -211,15 +213,19 @@
     </td>
 
     <!-- ListPrice -->
-    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
-        title="{{ $item->ListPrice }}">
-        <span>{{ $item->ListPrice }}</span>
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right" 
+        title="        {{ number_format($item->ListPrice, 0) }}
+">
+        <span>        {{ number_format($item->ListPrice, 0) }}
+</span>
     </td>
 
     <!-- SalePrice -->
-    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 
-        title="{{ $item->SalePrice }}">
-        <span>{{ $item->SalePrice }}</span>
+    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right" 
+        title="        {{ number_format($item->SalePrice, 0) }}
+">
+        <span>        {{ number_format($item->SalePrice, 0) }}
+</span>
     </td>
 
     <!-- Error Message -->
@@ -274,6 +280,6 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//fixed latest  28 jan 2026
+//04-feb-2026 Fixed Update
 </script>
 </html>

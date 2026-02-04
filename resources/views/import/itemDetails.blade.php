@@ -105,22 +105,23 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <p class="text-sm text-gray-600">Total Items</p>
-                    <p class="text-lg font-semibold">{{ $items->count() }}</p>
+    <p class="text-lg font-semibold">{{ $items->total() }}</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Import Type</p>
-                        <p class="text-lg font-semibold text-green-600">{{ $log->Import_Type }}</p>
+                        <p class="text-sm text-gray-600">Import Status</p>
+                        <p class="text-lg font-semibold text-green-600">Items</p>
 
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Imported By</p>
                         <p class="text-lg font-semibold">{{ $log->Imported_By }}</p>
-
+            
                     </div>
                     <div>
-                        <!-- <p class="text-sm text-gray-600">File Name</p> -->
-                        <p class="text-lg font-semibold">{{ $log->File_Name }}</p>
-
+                        <p class="text-sm text-gray-600">Created At</p>
+                <p class="text-lg font-semibold">
+                    {{ $log->Imported_Date?->format('Y-m-d H:i') ?? '-' }}
+                </p>
                     </div>
                 </div>
             </div>
@@ -134,7 +135,7 @@
             
           <div class="table-container">
     <table class="w-full">
-        <thead class="bg-gray-100 sticky-header">
+        <thead class="bg-gray-100 ">
             <tr>
                 <th class="p-3 text-left font-medium text-gray-700">Item_Code</th>
                 <th class="p-3 text-left font-medium text-gray-700">Item_Name</th>
@@ -180,9 +181,8 @@
     </table>
 </div>
 
-            
             <!-- Pagination -->
-           {{-- Fixed latest code  26 jan 2026 --}}
+           {{-- 04-feb-2026 Fixed Update --}}
 @if($items->hasPages() || $items->total() > 0)
     <x-pagination :paginator="$items" label="items" />
 @endif

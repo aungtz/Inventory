@@ -186,7 +186,12 @@ td {
                         <p class="text-sm text-gray-600">Imported By</p>
                         <p class="text-lg font-semibold">System</p>
                     </div>
-                  
+                    <div>
+                        <p class="text-sm text-gray-600">Created At</p>
+                <p class="text-lg font-semibold">
+                    {{ $log->Imported_Date?->format('Y-m-d H:i') ?? '-' }}
+                </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -264,11 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-//Fixed latest code  26 jan 2026
+//04-feb-2026 Fixed Update
 </script>
             
             <!-- Pagination -->
                   <!-- Pagination -->
+                   
                 @if($items->hasPages() || $items->total() > 0)
         <x-pagination :paginator="$items" label="items" />
                  @endif
@@ -276,3 +282,4 @@ document.addEventListener('DOMContentLoaded', function() {
     </main>
 </body>
 </html>
+

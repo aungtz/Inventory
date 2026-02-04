@@ -156,15 +156,20 @@ tr:hover {
                         <p class="text-sm text-gray-600">Total SKUs</p>
                         <p class="text-lg font-semibold">{{ $items->count() }}</p>
                     </div>
-                    <!-- <div>
+                    <div>
                         <p class="text-sm text-gray-600">Import Status</p>
-                        <p class="text-lg font-semibold text-green-600">Completed</p>
-                    </div> -->
+                        <p class="text-lg font-semibold text-green-600">SKU</p>
+                    </div>
                     <div>
                         <p class="text-sm text-gray-600">Imported By</p>
                         <p class="text-lg font-semibold">System</p>
                     </div>
-                   
+                     <div>
+                        <p class="text-sm text-gray-600">Created At</p>
+                <p class="text-lg font-semibold">
+                    {{ $log->Imported_Date?->format('Y-m-d H:i') ?? '-' }}
+                </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,7 +221,7 @@ tr:hover {
                         <span class="font-mono">{{ $item->JanCD }}</span>
                     </td>
 
-                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[5rem]" title="{{ $item->Quantity }}">
+                    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[5rem] text-right" title="{{ $item->Quantity }}">
                         <span>{{ $item->Quantity }}</span>
                     </td>
 
@@ -272,6 +277,6 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//Fixed latest code  28 jan 2026
+//04-feb-2026 Fixed Update
 </script>
 </html>

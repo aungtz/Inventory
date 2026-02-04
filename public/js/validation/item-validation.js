@@ -843,12 +843,23 @@ function validateItemCodeLength(input) {
     return validateByteLength(input, 50, "Item Code", true); 
     console.log("length is working")
 }
-
 function validateItemNameLength(input) {
-    // NVARCHAR(100) = 200 bytes
-    if (!validateRequiredText(input)) {
+    // Get the raw value for the UI, but a trimmed version for the check
+    const rawVal = input.value;
+    const trimmedVal = rawVal.trim();
+
+    // 1. Check if it's empty (after trimming)
+    if (!trimmedVal) {
+        setInvalid(input);
+        showInputError(input, "This field is required");
         return false;
     }
+
+    // 2. Clear previous errors if it passes the empty check
+    setValid(input);
+    
+    // 3. Validate byte length on the raw value 
+    // (or trimmedVal, depending on if you want to store trailing spaces in DB)
     return validateByteLength(input, 100, "Item Name", true);
 }
 
@@ -952,5 +963,6 @@ function submitButtonValidate(){
     }
 
     
-//Fixed Latest Codes 26 Jan 2026
+            //04-feb-2026 Fixed Update
+
 
