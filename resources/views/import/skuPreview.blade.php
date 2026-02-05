@@ -278,7 +278,7 @@
                             <th class="p-4 text-left font-semibold">Size_Code</th>
                             <th class="p-4 text-left font-semibold">Color_Code</th>
                             <th class="p-4 text-left font-semibold">JanCode</th>
-                            <th class="p-4 text-left font-semibold">Quantity</th>
+                            <th class="p-4 text-right font-semibold">Quantity</th>
                             <th class="p-4 text-left font-semibold w-80">Error Message</th>
                         </tr>
                     </thead>
@@ -424,7 +424,7 @@
 
 <!-- Quantity -->
 <td class="p-4 w-28">
-    <span class="truncate-text quantity-normal whitespace-nowrap overflow-hidden text-ellipsis block"
+    <span class="truncate-text quantity-normal whitespace-nowrap overflow-hidden text-ellipsis block text-right"
           title="${row.Quantity || '-'}">
         ${row.Quantity || "-"}
     </span>

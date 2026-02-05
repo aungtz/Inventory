@@ -142,8 +142,8 @@
                 <th class="p-3 text-left font-medium text-gray-700">JanCD</th>
                 <th class="p-3 text-left font-medium text-gray-700">MakerName</th>
                 <th class="p-3 text-left font-medium text-gray-700">Memo</th>
-                <th class="p-3 text-left font-medium text-gray-700">ListPrice</th>
-                <th class="p-3 text-left font-medium text-gray-700">SalePrice</th>
+                <th class="p-3 text-right font-medium text-gray-700">ListPrice</th>
+                <th class="p-3 text-right font-medium text-gray-700">SalePrice</th>
             </tr>
         </thead>
         <tbody>
@@ -164,13 +164,13 @@
                 <td class="p-3 truncate-cell" title="{{ $item->Memo }}">
                     <span class="truncate-content">{{ $item->Memo }}</span>
                 </td>
-               <td class="p-3 truncate-cell" title="{{ number_format($item->ListPrice, 0) }}">
+               <td class="p-3 truncate-cell text-right" title="{{ number_format($item->ListPrice, 0) }}">
     <span class="truncate-content">
         {{ number_format($item->ListPrice, 0) }}
     </span>
 </td>
 
-                <td class="p-3 truncate-cell" title="{{ $item->SalePrice }}">
+                <td class="p-3 truncate-cell text-right" title="{{ $item->SalePrice }}">
                     <span class="truncate-content">
                         {{ number_format($item->SalePrice ,0) }}
                     </span>

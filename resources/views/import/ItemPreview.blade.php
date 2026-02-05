@@ -268,8 +268,8 @@
                             <th class="p-4 text-left font-semibold">JanCD</th>
                             <th class="p-4 text-left font-semibold">MakerName</th>
                             <th class="p-4 text-left font-semibold">Memo</th>
-                            <th class="p-4 text-left font-semibold">ListPrice</th>
-                            <th class="p-4 text-left font-semibold">SalePrice</th>
+                            <th class="p-4 text-right font-semibold">ListPrice</th>
+                            <th class="p-4 text-right font-semibold">SalePrice</th>
                             <th class="p-4 text-left font-semibold w-80">Error Message</th>
                         </tr>
                     </thead>

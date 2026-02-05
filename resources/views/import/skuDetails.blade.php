@@ -212,7 +212,7 @@ td {
                 <th class="p-3 text-left">Size Code</th>
                 <th class="p-3 text-left">Color Code</th>
                 <th class="p-3 text-left">JAN Code</th>
-                <th class="p-3 text-left">Quantity</th>
+                <th class="p-3 text-right">Quantity</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -239,7 +239,7 @@ td {
                 <td class="p-3 font-mono truncate-cell" title="{{ $item->JanCD }}">
                     <span class="truncate-content">{{ $item->JanCD }}</span>
                 </td>
-                <td class="p-3 font-medium truncate-cell" title="{{ $item->Quantity }}">
+                <td class="p-3 font-medium truncate-cell text-right" title="{{ $item->Quantity }}">
                     <span class="truncate-content">{{ $item->Quantity }}</span>
                 </td>
             </tr>

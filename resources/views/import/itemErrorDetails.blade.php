@@ -174,8 +174,8 @@
                             <th class="p-3 text-left font-medium text-gray-700">JanCD</th>
                             <th class="p-3 text-left font-medium text-gray-700">MakerName</th>
                             <th class="p-3 text-left font-medium text-gray-700">Memo</th>
-                            <th class="p-3 text-left font-medium text-gray-700">ListPrice</th>
-                            <th class="p-3 text-left font-medium text-gray-700">SalePrice</th>
+                            <th class="p-3 text-right font-medium text-gray-700">ListPrice</th>
+                            <th class="p-3 text-right font-medium text-gray-700">SalePrice</th>
                                                          <th class="p-3 text-left font-medium text-gray-700">Error Message</th>
 
                         </tr>

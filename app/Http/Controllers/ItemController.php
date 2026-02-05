@@ -680,35 +680,167 @@ public function edit($id)
 
 public function destroySku(Request $request)
 {
+    // Log the incoming request
+    \Log::info('========== SKU DELETE REQUEST STARTED ==========');
+    \Log::info('Request received at: ' . now()->toDateTimeString());
+    \Log::info('Request IP: ' . $request->ip());
+    \Log::info('Request URL: ' . $request->fullUrl());
+    \Log::info('Request Method: ' . $request->method());
+    \Log::info('CSRF Token Present: ' . ($request->header('X-CSRF-TOKEN') ? 'Yes' : 'No'));
+    
     try {
-        $itemsToDelete = $request->input('items'); // This is the array from JS
+        $itemsToDelete = $request->input('items');
+        
+        // Log raw input
+        \Log::info('Raw request input:', $request->all());
+        \Log::info('Items to delete (raw):', ['items' => $itemsToDelete]);
+        \Log::info('Items count: ' . (is_array($itemsToDelete) ? count($itemsToDelete) : 'Not an array'));
 
         // Validation
-        if (empty($itemsToDelete) || !is_array($itemsToDelete)) {
-            return response()->json(['success' => false, 'message' => 'No items provided'], 400);
+        if (empty($itemsToDelete)) {
+            \Log::warning('Empty items array received');
+            return response()->json([
+                'success' => false, 
+                'message' => 'No items provided'
+            ], 400);
+        }
+
+        if (!is_array($itemsToDelete)) {
+            \Log::warning('Items is not an array', ['type' => gettype($itemsToDelete)]);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Invalid items format. Expected array.'
+            ], 400);
         }
 
         $totalDeleted = 0;
+        $processedItems = [];
+        $failedItems = [];
 
-        foreach ($itemsToDelete as $item) {
-            // Use the keys matching your JavaScript object: item_code, size_code, color_code
-            $deleted = \DB::table('M_SKU')
-                ->where('Item_Code', $item['item_code'])
-                ->where('Size_Code', $item['size_code'])
-                ->where('Color_Code', $item['color_code'])
-                ->delete();
+        \Log::info('Starting deletion process for ' . count($itemsToDelete) . ' items');
+
+        foreach ($itemsToDelete as $index => $item) {
+            \Log::info("Processing item #" . ($index + 1), $item);
             
-            $totalDeleted += $deleted;
+            // Validate required fields
+            if (!isset($item['item_code']) || !isset($item['size_code']) || !isset($item['color_code'])) {
+                $errorMsg = 'Missing required fields in item #' . ($index + 1) . ': ' . json_encode($item);
+                \Log::warning($errorMsg);
+                $failedItems[] = [
+                    'item' => $item,
+                    'error' => 'Missing required fields (item_code, size_code, or color_code)'
+                ];
+                continue;
+            }
+
+            try {
+                // Log the query being executed
+                \Log::debug('Executing delete query for:', [
+                    'Item_Code' => $item['item_code'],
+                    'Size_Code' => $item['size_code'],
+                    'Color_Code' => $item['color_code']
+                ]);
+
+                // First, check if record exists
+                $exists = \DB::table('M_SKU')
+                    ->where('Item_Code', $item['item_code'])
+                    ->where('Size_Code', $item['size_code'])
+                    ->where('Color_Code', $item['color_code'])
+                    ->exists();
+                
+                \Log::info('Record exists check: ' . ($exists ? 'Found' : 'Not found'));
+
+                if ($exists) {
+                    // Execute deletion
+                    $deleted = \DB::table('M_SKU')
+                        ->where('Item_Code', $item['item_code'])
+                        ->where('Size_Code', $item['size_code'])
+                        ->where('Color_Code', $item['color_code'])
+                        ->delete();
+                    
+                    $totalDeleted += $deleted;
+                    
+                    if ($deleted > 0) {
+                        \Log::info('✓ Successfully deleted record:', $item);
+                        $processedItems[] = [
+                            'item' => $item,
+                            'status' => 'deleted',
+                            'rows_affected' => $deleted
+                        ];
+                    } else {
+                        \Log::warning('No rows deleted for item (possible database error):', $item);
+                        $failedItems[] = [
+                            'item' => $item,
+                            'error' => 'Delete query executed but no rows affected'
+                        ];
+                    }
+                } else {
+                    \Log::warning('Record not found in database:', $item);
+                    $failedItems[] = [
+                        'item' => $item,
+                        'error' => 'Record not found in database'
+                    ];
+                }
+
+            } catch (\Exception $e) {
+                \Log::error('Error deleting item #' . ($index + 1), [
+                    'item' => $item,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                $failedItems[] = [
+                    'item' => $item,
+                    'error' => $e->getMessage()
+                ];
+            }
         }
 
-        return response()->json([
-            'success' => true, 
+        // Log summary
+        \Log::info('========== DELETION SUMMARY ==========');
+        \Log::info('Total items processed: ' . count($itemsToDelete));
+        \Log::info('Successfully deleted: ' . $totalDeleted);
+        \Log::info('Failed items: ' . count($failedItems));
+        \Log::info('Processed items detail:', $processedItems);
+        
+        if (count($failedItems) > 0) {
+            \Log::warning('Failed items detail:', $failedItems);
+        }
+
+        \Log::info('========== SKU DELETE REQUEST COMPLETED ==========');
+
+        // Prepare response
+        $response = [
+            'success' => true,
             'message' => 'SKUs processed successfully',
-            'deleted_count' => $totalDeleted
-        ]);
+            'deleted_count' => $totalDeleted,
+            'total_attempted' => count($itemsToDelete),
+            'failed_count' => count($failedItems)
+        ];
+
+        // Only include failed items in response if in debug mode or if there were failures
+        if (config('app.debug') || count($failedItems) > 0) {
+            $response['failed_items'] = $failedItems;
+        }
+
+        return response()->json($response);
 
     } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        \Log::error('SKU Delete Controller Exception', [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+            'request' => $request->all()
+        ]);
+
+        \Log::info('========== SKU DELETE REQUEST FAILED ==========');
+
+        return response()->json([
+            'success' => false, 
+            'message' => 'Server error occurred while processing SKU deletion',
+            'error_details' => config('app.debug') ? $e->getMessage() : null
+        ], 500);
     }
 }
 
@@ -966,7 +1098,7 @@ public function searchSku(Request $request)
 
 
 }
-//04-feb-2026 Fixed Update
+//04-feb-2026 Fixed 
 
 
 

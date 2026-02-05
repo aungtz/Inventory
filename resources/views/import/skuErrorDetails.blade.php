@@ -190,7 +190,7 @@ tr:hover {
                     <th class="p-3 text-left w-24">Size Code</th>
                     <th class="p-3 text-left w-24">Color Code</th>
                     <th class="p-3 text-left w-40">JAN Code</th>
-                    <th class="p-3 text-left w-20">Quantity</th>
+                    <th class="p-3 text-right w-20">Quantity</th>
                     <th class="p-3 text-left w-64">Error Message</th>
                 </tr>
             </thead>

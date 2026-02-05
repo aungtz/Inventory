@@ -603,7 +603,7 @@
             class="px-8 py-3 rounded-xl font-medium transition-all duration-300 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transform hover:scale-105">
             Cancel
           </a>
-          <button type="submit"
+          <button type="submit" 
             class="btn-success px-8 py-3 rounded-xl text-white font-medium flex items-center gap-2 transition-all duration-300">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -949,161 +949,197 @@
       return String(code).replace(/^0+/, '') || '0';
     }
 
+//sku modal part.
 
+  function setupSkuModal() {
+  const skuModal = document.getElementById('skuModal');
+  const openSku = document.getElementById('openSkuModal');
+  const closeSku = document.getElementById('closeSkuModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const saveSkusBtn = document.getElementById('saveSkusBtn');
+  const addSkuRowBtn = document.getElementById('addSkuRowBtn');
+  const skuModalBody = document.getElementById('skuModalBody');
 
-    function setupSkuModal() {
-      const skuModal = document.getElementById('skuModal');
-      const openSku = document.getElementById('openSkuModal');
-      const closeSku = document.getElementById('closeSkuModal');
-      const closeModalBtn = document.getElementById('closeModalBtn');
-      const saveSkusBtn = document.getElementById('saveSkusBtn');
-      const addSkuRowBtn = document.getElementById('addSkuRowBtn');
-      const skuModalBody = document.getElementById('skuModalBody');
+  loadExistingSkusIntoModal();
 
-      loadExistingSkusIntoModal();
+  openSku.addEventListener('click', () => {
+    populateModalWithExistingSkus();
+    skuModal.classList.add('active');
+  });
 
-      openSku.addEventListener('click', () => {
-        populateModalWithExistingSkus();
-        skuModal.classList.add('active');
+  addSkuRowBtn.addEventListener('click', () => addSkuRow());
+
+  const handleCancel = () => {
+    // Clear the pending delete queue
+    state.skusToDelete = [];
+    // Just close. Because we never filtered state.skus,
+    // the data is still safe in memory for the next "Open".
+    skuModal.classList.remove('active');
+  };
+
+  closeSku.addEventListener('click', handleCancel);
+  closeModalBtn.addEventListener('click', handleCancel);
+
+  saveSkusBtn.addEventListener('click', async () => {
+    const newSkus = [];
+    let hasError = false;
+    let errors = [];
+
+    skuModalBody.querySelectorAll('tr').forEach((row, index) => {
+      const sizeName = row.querySelector('.size-name')?.value.trim() || '';
+      const colorName = row.querySelector('.color-name')?.value.trim() || '';
+      const itemAdminCode = row.dataset.adminCode || '';
+
+      const sizeCodeRaw = row.querySelector('.size-code')?.value.trim() || '';
+      const colorCodeRaw = row.querySelector('.color-code')?.value.trim() || '';
+
+      const janCode = row.querySelector('.jan-code')?.value.trim() || '';
+      const qtyFlag = row.querySelector('.qty-flag')?.value || 'false';
+      const stockQuantity = row.querySelector('.stock-quantity')?.value || '0';
+
+      // Skip empty row
+      if (!sizeName && !colorName && !sizeCodeRaw && !colorCodeRaw && !janCode) return;
+
+      // 🔑 compare-only values
+      const sizeCodeCmp = stripLeadingZeros(sizeCodeRaw);
+      const colorCodeCmp = stripLeadingZeros(colorCodeRaw);
+
+      // ---------- DUPLICATE CHECKS ----------
+      const pairCodeDup = newSkus.some(s =>
+        s.sizeCodeCmp === sizeCodeCmp &&
+        s.colorCodeCmp === colorCodeCmp
+      );
+
+      const pairNameDup = newSkus.some(s =>
+        s.sizeName === sizeName &&
+        s.colorName === colorName
+      );
+
+      const sizeCodeAloneDup = newSkus.some(s =>
+        s.sizeCodeCmp === sizeCodeCmp &&
+        s.sizeName !== sizeName
+      );
+
+      const colorCodeAloneDup = newSkus.some(s =>
+        s.colorCodeCmp === colorCodeCmp &&
+        s.colorName !== colorName
+      );
+
+      const sizeNameAloneDup = newSkus.some(s =>
+        s.sizeName === sizeName &&
+        s.sizeCodeCmp !== sizeCodeCmp
+      );
+
+      const colorNameAloneDup = newSkus.some(s =>
+        s.colorName === colorName &&
+        s.colorCodeCmp !== colorCodeCmp
+      );
+
+      // ---------- ERROR MESSAGES ----------
+      if (pairCodeDup) {
+        errors.push(
+          `Row ${index + 1}: SizeCode "${sizeCodeRaw}" + ColorCode "${colorCodeRaw}" already exists.`
+        );
+      }
+
+      if (pairNameDup) {
+        errors.push(
+          `Row ${index + 1}: Size "${sizeName}" + Color "${colorName}" already exists.`
+        );
+      }
+
+      if (sizeCodeAloneDup) {
+        const ex = newSkus.find(s => s.sizeCodeCmp === sizeCodeCmp);
+        errors.push(
+          `Row ${index + 1}: Size Code "${sizeCodeRaw}" already used by "${ex.sizeName}".`
+        );
+      }
+
+      if (colorCodeAloneDup) {
+        const ex = newSkus.find(s => s.colorCodeCmp === colorCodeCmp);
+        errors.push(
+          `Row ${index + 1}: Color Code "${colorCodeRaw}" already used by "${ex.colorName}".`
+        );
+      }
+
+      if (sizeNameAloneDup) {
+        const ex = newSkus.find(s => s.sizeName === sizeName);
+        errors.push(
+          `Row ${index + 1}: Size "${sizeName}" already mapped to Code "${ex.sizeCode}".`
+        );
+      }
+
+      if (colorNameAloneDup) {
+        const ex = newSkus.find(s => s.colorName === colorName);
+        errors.push(
+          `Row ${index + 1}: Color "${colorName}" already mapped to Code "${ex.colorCode}".`
+        );
+      }
+
+      // Stop adding this row if errors detected
+      if (errors.length) return;
+
+      // ✅ Push with BOTH raw + compare values
+      newSkus.push({
+        itemAdminCode: itemAdminCode || null,
+        sizeName,
+        colorName,
+        sizeCode: sizeCodeRaw,
+        colorCode: colorCodeRaw,
+        sizeCodeCmp,
+        colorCodeCmp,
+        janCode,
+        qtyFlag,
+        stockQuantity: parseInt(stockQuantity, 10) || 0,
+        state: itemAdminCode ? 'existing' : 'new'
+        
       });
+    });
 
-      closeSku.addEventListener('click', () => skuModal.classList.remove('active'));
-      closeModalBtn.addEventListener('click', () => skuModal.classList.remove('active'));
-      addSkuRowBtn.addEventListener('click', () => addSkuRow());
-      saveSkusBtn.addEventListener('click', () => {
-        const newSkus = [];
-        let errors = [];
+    // --- Check for validation errors ---
+    if (errors.length) {
+      alert("SKU Validation Errors:\n\n" + errors.join("\n"));
+      return;
+    }
 
-        skuModalBody.querySelectorAll('tr').forEach((row, index) => {
-
-          const sizeName = row.querySelector('.size-name')?.value.trim() || '';
-          const colorName = row.querySelector('.color-name')?.value.trim() || '';
-          const itemAdminCode = row.dataset.adminCode || '';
-
-          const sizeCodeRaw = row.querySelector('.size-code')?.value.trim() || '';
-          const colorCodeRaw = row.querySelector('.color-code')?.value.trim() || '';
-
-          const janCode = row.querySelector('.jan-code')?.value.trim() || '';
-          const qtyFlag = row.querySelector('.qty-flag')?.value || 'false';
-          const stockQuantity = row.querySelector('.stock-quantity')?.value || '0';
-
-          // Skip empty row
-          if (!sizeName && !colorName && !sizeCodeRaw && !colorCodeRaw && !janCode) return;
-
-          // 🔑 compare-only values
-          const sizeCodeCmp = stripLeadingZeros(sizeCodeRaw);
-          const colorCodeCmp = stripLeadingZeros(colorCodeRaw);
-
-          // ---------- DUPLICATE CHECKS ----------
-
-          const pairCodeDup = newSkus.some(s =>
-            s.sizeCodeCmp === sizeCodeCmp &&
-            s.colorCodeCmp === colorCodeCmp
-          );
-
-          const pairNameDup = newSkus.some(s =>
-            s.sizeName === sizeName &&
-            s.colorName === colorName
-          );
-
-          const sizeCodeAloneDup = newSkus.some(s =>
-            s.sizeCodeCmp === sizeCodeCmp &&
-            s.sizeName !== sizeName
-          );
-
-          const colorCodeAloneDup = newSkus.some(s =>
-            s.colorCodeCmp === colorCodeCmp &&
-            s.colorName !== colorName
-          );
-
-          const sizeNameAloneDup = newSkus.some(s =>
-            s.sizeName === sizeName &&
-            s.sizeCodeCmp !== sizeCodeCmp
-          );
-
-          const colorNameAloneDup = newSkus.some(s =>
-            s.colorName === colorName &&
-            s.colorCodeCmp !== colorCodeCmp
-          );
-
-          // ---------- ERROR MESSAGES ----------
-
-          if (pairCodeDup) {
-            errors.push(
-              `Row ${index + 1}: SizeCode "${sizeCodeRaw}" + ColorCode "${colorCodeRaw}" already exists.`
-            );
-          }
-
-          if (pairNameDup) {
-            errors.push(
-              `Row ${index + 1}: Size "${sizeName}" + Color "${colorName}" already exists.`
-            );
-          }
-
-          if (sizeCodeAloneDup) {
-            const ex = newSkus.find(s => s.sizeCodeCmp === sizeCodeCmp);
-            errors.push(
-              `Row ${index + 1}: Size Code "${sizeCodeRaw}" already used by "${ex.sizeName}".`
-            );
-          }
-
-          if (colorCodeAloneDup) {
-            const ex = newSkus.find(s => s.colorCodeCmp === colorCodeCmp);
-            errors.push(
-              `Row ${index + 1}: Color Code "${colorCodeRaw}" already used by "${ex.colorName}".`
-            );
-          }
-
-          if (sizeNameAloneDup) {
-            const ex = newSkus.find(s => s.sizeName === sizeName);
-            errors.push(
-              `Row ${index + 1}: Size "${sizeName}" already mapped to Code "${ex.sizeCode}".`
-            );
-          }
-
-          if (colorNameAloneDup) {
-            const ex = newSkus.find(s => s.colorName === colorName);
-            errors.push(
-              `Row ${index + 1}: Color "${colorName}" already mapped to Code "${ex.colorCode}".`
-            );
-          }
-
-          // Stop adding this row if errors detected
-          if (errors.length) return;
-
-          // ✅ Push with BOTH raw + compare values
-          newSkus.push({
-            itemAdminCode: itemAdminCode || null,
-
-            sizeName,
-            colorName,
-
-            sizeCode: sizeCodeRaw,       // keep original
-            colorCode: colorCodeRaw,     // keep original
-
-            sizeCodeCmp,                 // compare-only
-            colorCodeCmp,                // compare-only
-
-            janCode,
-            qtyFlag,
-            stockQuantity: parseInt(stockQuantity, 10) || 0,
-            state: itemAdminCode ? 'existing' : 'new'
-          });
+    // --- DB DELETE CALL ---
+    if (state.skusToDelete.length > 0) {
+      try {
+        const response = await fetch("{{ route('items.sku.destroy') }}", {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ items: state.skusToDelete })
         });
 
-        if (errors.length) {
-          alert("SKU Validation Errors:\n\n" + errors.join("\n"));
+        const data = await response.json();
+        if (!data.success) {
+          alert('Server failed to delete: ' + data.message);
           return;
         }
+        console.log('Backend deletion successful');
+        state.skusToDelete = [];
+      } catch (error) {
+        console.error('Error during batch delete:', error);
+        return;
+      }
+    }
 
-        // Save
-        state.skus = newSkus.map(({ sizeCodeCmp, colorCodeCmp, ...sku }) => sku);
-        document.getElementById('skus_json').value = JSON.stringify(state.skus);
+    // --- FINAL SYNC ---
+    // Update global state and hidden JSON field
+    state.skus = newSkus.map(({ sizeCodeCmp, colorCodeCmp, ...sku }) => sku);
 
-        renderSkuTable();
-        skuModal.classList.remove('active');
-      });
+    const skusJsonInput = document.getElementById('skus_json');
+    if (skusJsonInput) {
+      skusJsonInput.value = JSON.stringify(state.skus);
+    }
 
+    renderSkuTable(); // Refresh UI table
+    skuModal.classList.remove('active');
+  });
+}
 
 
 
@@ -1240,11 +1276,11 @@
       function addSkuRow(skuData = {}) {
         const skuModalBody = document.getElementById('skuModalBody');
         const rowId = Date.now() + Math.random();
-
         const row = document.createElement('tr');
         row.className = 'sku-row border-b border-gray-200';
         row.dataset.rowId = rowId;
 
+        const adminCode = skuData.itemAdminCode || skuData.item_admin_code || skuData.admin_code || '';
         // Store sizeCode/colorCode in dataset for easy lookup
         row.dataset.adminCode = skuData.itemAdminCode || '';
         row.dataset.sizeCode = skuData.sizeCode || '';
@@ -1315,66 +1351,25 @@
         const deletedSkus = [];
 
         skuModalBody.appendChild(row);
-        row.querySelector('.delete-row-btn').addEventListener('click', async (e) => {
-          e.preventDefault();
+        row.querySelector('.delete-row-btn').addEventListener('click', (e) => {
+    e.preventDefault();
 
-          const sizeCode = row.dataset.sizeCode;
-          const colorCode = row.dataset.colorCode;
-          const itemCode = document.getElementById('Item_Code').value; // Get current item code
-
-
-
-          state.skusToDelete.push({
-            item_code: itemCode,
-            size_code: sizeCode,
-            color_code: colorCode
-          });
-
-          // 2. Remove from the local UI state
-          state.skus = state.skus.filter(s => !(s.sizeCode === sizeCode && s.colorCode === colorCode));
-
-          // 3. Refresh the table UI
-          row.remove();
+    // 1. Track the intention to delete if it's an existing SKU
+    if (row.dataset.adminCode) {
+        state.skusToDelete.push({
+            item_code: document.getElementById('Item_Code').value,
+            size_code: row.dataset.sizeCode,
+            color_code: row.dataset.colorCode
         });
-        attachSkuRowValidation(row);
-      }
     }
 
-    document.getElementById('saveSkusBtn').addEventListener('click', async () => {
-
-      // Check if there are items to delete
-      if (state.skusToDelete.length > 0) {
-        try {
-          const response = await fetch("{{ route('items.sku.destroy') }}", {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-              items: state.skusToDelete // Send the whole array at once
-            })
-          });
-
-          const data = await response.json();
-
-          if (data.success) {
-            console.log('Backend deletion successful');
-            state.skusToDelete = []; // Clear the queue after success
-          } else {
-            alert('Server failed to delete: ' + data.message);
-            return; // Stop execution if deletion fails
-          }
-        } catch (error) {
-          console.error('Error during batch delete:', error);
-          return;
-        }
+    row.remove(); 
+    
+    // NOTE: We do NOT filter state.skus here anymore!
+});
+       if (window.attachSkuRowValidation) attachSkuRowValidation(row);
       }
-
-      // PROCEED TO SAVE REMAINING SKUS
-      // saveCurrentSkus(); 
-    });
-
+    
 
     document.querySelectorAll('.image-name').forEach(input => {
       input.addEventListener('blur', () => {
@@ -1397,6 +1392,7 @@
 
       // Update GLOBAL state
       state.skus = existingSkus.map(s => ({
+          itemAdminCode: s.Item_AdminCode,   // IMPORTANT
         sizeName: s.Size_Name,
         colorName: s.Color_Name,
         sizeCode: s.Size_Code,
@@ -1541,7 +1537,7 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//04-feb-2026 Fixed Update
+//Fixed Latest Code 26 Jan 26
   </script>
 </body>
 
