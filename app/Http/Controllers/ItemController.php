@@ -929,6 +929,9 @@ public function itemSelectDelete(Request $request)
 {
     $itemCode = trim($request->query('item_code'));
     $itemName = trim($request->query('item_name'));
+    $janCode   = trim($request->query('jan_code'));
+    $adminCode = trim($request->query('admin_code'));
+
     $viewType = $request->query('view_type', 'item');
     $format   = $request->query('format', 'excel');
 
@@ -945,40 +948,63 @@ public function itemSelectDelete(Request $request)
 
             $itemCode = implode(',', $itemCodes);
         }
-
-        // if (!$itemCode) {
-        //     return back()->with('error', 'Item Code is required to export SKU.');
-        //     \Log('item code is required to export sku');
-        // }
     }
 
     // Validation query
-    $query = $viewType === 'sku'
-        ? \App\Models\Sku::query()
-        : \App\Models\Item::query();
+  // Validation query
+$query = $viewType === 'sku'
+    ? \App\Models\Sku::query()
+    : \App\Models\Item::query();
 
-    if ($itemCode) {
-        $query->where(function ($q) use ($itemCode) {
-            foreach (explode(',', $itemCode) as $code) {
-                $q->orWhere('Item_Code', 'like', '%' . trim($code) . '%');
-            }
-        });
-    }
+if ($itemCode) {
+    $query->where(function ($q) use ($itemCode) {
+        foreach (explode(',', $itemCode) as $code) {
+            $q->orWhere('Item_Code', 'like', '%' . trim($code) . '%');
+        }
+    });
+}
 
-    if ($itemName && $viewType === 'item') {
-        $query->where('Item_Name', 'like', '%' . $itemName . '%');
-    }
+if ($itemName && $viewType === 'item') {
+    $query->where('Item_Name', 'like', '%' . $itemName . '%');
+}
 
-    if ($query->count() === 0) {
-        return back()->with('error', 'No data found to export.');
-    }
+/* ================================
+   ✅ ADD SKU-ONLY VALIDATION FILTERS
+   ================================ */
+if ($viewType === 'sku' && $janCode) {
+    $query->where('JanCode', 'like', '%' . $janCode . '%');
+}
+
+if ($viewType === 'sku' && $adminCode) {
+    $query->where(function ($q) use ($adminCode) {
+        foreach (explode(',', $adminCode) as $code) {
+            $q->orWhere(
+                'Item_AdminCode',
+                'like',
+                '%' . trim($code) . '%'
+            );
+        }
+    });
+}
+
+
+if ($query->count() === 0) {
+    return back()->with('error', 'No data found to export.');
+}
+
 
     $fileName = ($viewType === 'sku' ? 'sku_' : 'item_') . 'export';
 
     // CSV
     if ($format === 'csv') {
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\ItemExport($itemCode, $itemName, $viewType),
+            new \App\Exports\ItemExport(
+                 $itemCode,
+            $itemName,
+            $viewType,
+            $janCode,
+            $adminCode
+            ),
             $fileName . '.csv',
             \Maatwebsite\Excel\Excel::CSV
         );
@@ -986,7 +1012,13 @@ public function itemSelectDelete(Request $request)
 
     // Excel
     return \Maatwebsite\Excel\Facades\Excel::download(
-        new \App\Exports\ItemExport($itemCode, $itemName, $viewType),
+        new \App\Exports\ItemExport(
+              $itemCode,
+            $itemName,
+            $viewType,
+            $janCode,
+            $adminCode
+        ),
         $fileName . '.xlsx'
     );
 }
@@ -1098,7 +1130,7 @@ public function searchSku(Request $request)
 
 
 }
-//04-feb-2026 Fixed 
+//09 -Feb-2026 Fixed 
 
 
 

@@ -307,9 +307,9 @@
                             </a>
                         </th>
         <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-64">Item Name</th>
-        <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan CD</th>
-        <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Maker Name</th>
-        <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-48">Memo</th>
+        <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan CD</th>
+        <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Maker Name</th>
+        <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-48">Memo</th>
         <th class="px-3 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">List Price</th>
         <th class="px-3 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Sale Price</th>
         <th class="px-3 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Actions</th>
@@ -437,6 +437,11 @@
         </div>
     </div>
 </div>
+@if(session('error'))
+    <script>
+        alert("{{ session('error') }}");
+    </script>
+@endif
 
     <!-- JavaScript for functionality -->
     <script>
@@ -1199,7 +1204,7 @@ searchBtn.addEventListener("click", () => {
 
 [itemCodeInput, itemNameInput].forEach(input => {
     input.addEventListener("input", () => {
-        //  if (!hasSearched) return;
+         if (!hasSearched) return;
         // if(!isExporting)return;
 
         const itemCode = itemCodeInput.value.trim();
@@ -1390,7 +1395,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-//04-feb-2026 Fixed Update
+//06-Feb-2026
 </script>
 </body>
 </html>

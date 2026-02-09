@@ -345,6 +345,44 @@
                 }
             });
         });
+
+// Simplified version - just add this to your existing code
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarPages = ['/itemList', '/skuList', '/items-create', '/import-log'];
+    const currentPath = window.location.pathname;
+    
+    // Check if current page is NOT in sidebar
+    if (!sidebarPages.includes(currentPath)) {
+        // Clear all active highlights
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+            // Reset to default styling
+            item.style.background = '';
+            item.style.borderLeft = '';
+            item.style.boxShadow = '';
+        });
+        sessionStorage.removeItem('activeNav');
+    } else {
+        // Rest of your existing logic for sidebar pages
+        const savedNav = sessionStorage.getItem('activeNav');
+        const navIds = ['nav-items', 'nav-sku', 'nav-create-items', 'nav-import'];
+        
+        let activeIdToSet = 'nav-items'; // Default
+        
+        if (savedNav && (document.getElementById(savedNav) || document.getElementById(savedNav + '-desktop'))) {
+            activeIdToSet = savedNav;
+        }
+        
+        const mobileItem = document.getElementById(activeIdToSet);
+        const desktopItem = document.getElementById(activeIdToSet + '-desktop');
+        
+        if (mobileItem) mobileItem.classList.add('active');
+        if (desktopItem) desktopItem.classList.add('active');
+    }
+    
+    // Your existing click listeners and other code...
+});
+
         //04-feb-2026 Fixed Update
     </script>
 </body>

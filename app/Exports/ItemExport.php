@@ -17,12 +17,20 @@ class ItemExport implements FromQuery, WithHeadings, WithMapping, WithColumnForm
     protected $search;
     protected $viewType;
 
-public function __construct($itemCode = null, $itemName = null, $viewType = 'item')
-{
-    $this->itemCode = $itemCode;
-    $this->itemName = $itemName;
-    $this->viewType = $viewType;
+public function __construct(
+    $itemCode = null,
+    $itemName = null,
+    $viewType = 'item',
+    $janCode = null,
+    $adminCode = null
+) {
+    $this->itemCode  = $itemCode;
+    $this->itemName  = $itemName;
+    $this->viewType  = $viewType;
+    $this->janCode   = $janCode;
+    $this->adminCode = $adminCode;
 }
+
 
 public function getCsvSettings(): array
 {
@@ -38,20 +46,19 @@ public function getCsvSettings(): array
 
   public function query()
 {
-    $query = ($this->viewType === 'sku') ? Sku::query() : Item::query();
+    $query = ($this->viewType === 'sku')
+        ? Sku::query()
+        : Item::query();
 
-    // Apply filters
     if ($this->itemCode || ($this->itemName && $this->viewType !== 'sku')) {
+        $query->where(function ($q) {
 
-        $query->where(function($q) {
-            // Filter by Item_Code
             if ($this->itemCode) {
                 foreach (explode(',', $this->itemCode) as $code) {
                     $q->orWhere('Item_Code', 'like', '%' . trim($code) . '%');
                 }
             }
 
-            // Filter by Item_Name ONLY for Item table
             if ($this->itemName && $this->viewType !== 'sku') {
                 foreach (explode(',', $this->itemName) as $name) {
                     $q->orWhere('Item_Name', 'like', '%' . trim($name) . '%');
@@ -59,6 +66,26 @@ public function getCsvSettings(): array
             }
         });
     }
+
+    /* ================================
+       ✅ ADD SKU-ONLY EXPORT FILTERS
+       ================================ */
+    if ($this->viewType === 'sku' && $this->janCode) {
+        $query->where('JanCode', 'like', '%' . trim($this->janCode) . '%');
+    }
+
+   if ($this->viewType === 'sku' && $this->adminCode) {
+    $query->where(function ($q) {
+        foreach (explode(',', $this->adminCode) as $code) {
+            $q->orWhere(
+                'Item_AdminCode',
+                'like',
+                '%' . trim($code) . '%'
+            );
+        }
+    });
+}
+
 
     return $query->orderBy('Item_Code', 'asc');
 }
@@ -117,3 +144,4 @@ public function getCsvSettings(): array
         return ['Item_Code', 'Item_Name', 'JanCD', 'MakerName', 'Memo', 'ListPrice', 'SalePrice'];
     }
 }
+//09 -Feb-2026

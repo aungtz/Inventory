@@ -277,10 +277,29 @@
                        
                         
                 </table>
+               
             </div>
-            
+             <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+    <div class="flex flex-1 justify-between sm:hidden">
+        <button id="prevBtnMobile" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</button>
+        <button id="nextBtnMobile" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</button>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+            <p class="text-sm text-gray-700">
+                Showing <span id="startRange" class="font-medium">0</span> to <span id="endRange" class="font-medium">0</span> of <span id="totalResults" class="font-medium">0</span> results
+            </p>
+        </div>
+        <div>
+            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination" id="paginationNav">
+                </nav>
+        </div>
+    </div>
+</div>
          
         </div>
+
+
         <input type="hidden" id="importType" value="1">
 
       
@@ -293,25 +312,7 @@
           <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-           
-            
-            // Re-import button
-            const reimportBtn = document.getElementById('reimportBtn');
-            reimportBtn.addEventListener('click', function() {
-                window.location.href = '/item-master/import';
-            });
-            
-           
-            
-            // Pagination buttons
-            document.querySelectorAll('.pagination button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttonText = this.textContent.trim();
-                    alert(`Page navigation: ${buttonText} (simulated)`);
-                });
-            });
-        });
+      
         document.addEventListener("DOMContentLoaded", function () {
     const tableBody = document.getElementById("previewTableBody");
 
@@ -564,7 +565,110 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//04-feb-2026 Fixed Update
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.getElementById("previewTableBody");
+    const paginationNav = document.getElementById("paginationNav");
+    
+    // Retrieve data
+    const previewData = JSON.parse(sessionStorage.getItem("previewData") || "[]");
+    
+    // Pagination State
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function renderTable(page) {
+        tableBody.innerHTML = "";
+        
+        if (previewData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-gray-500">No data available.</td></tr>`;
+            return;
+        }
+
+        // Calculate start and end
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedItems = previewData.slice(start, end);
+
+        // Update counts in UI
+        document.getElementById("startRange").textContent = start + 1;
+        document.getElementById("endRange").textContent = Math.min(end, previewData.length);
+        document.getElementById("totalResults").textContent = previewData.length;
+
+        paginatedItems.forEach((row, index) => {
+            // Determine Status Logic (Same as your original code)
+            const isError = row.errors && row.errors.length > 0;
+            const isWarning = row.warnings && row.warnings.length > 0;
+            
+            let statusClass = isError ? "bg-red-50" : isWarning ? "bg-yellow-50" : "bg-green-50";
+            let statusLabel = isError ? "Error" : isWarning ? "Warning" : "Valid";
+            let statusIcon = isError ? "fa-times-circle" : isWarning ? "fa-exclamation-triangle" : "fa-check-circle";
+            let badgeClass = isError ? "bg-red-100 text-red-800" : isWarning ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800";
+
+            tableBody.innerHTML += `
+                <tr class="${statusClass} hover:bg-gray-100 transition-all border-b">
+                    <td class="p-4 font-mono">${row.lineNo || (start + index + 1)}</td>
+                    <td class="p-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                            <i class="fas ${statusIcon} mr-1"></i> ${statusLabel}
+                        </span>
+                    </td>
+                    <td class="p-4 font-mono truncate max-w-[120px]" title="${row.Item_Code}">${row.Item_Code || "-"}</td>
+                    <td class="p-4 truncate max-w-[150px]" title="${row.Item_Name}">${row.Item_Name || "-"}</td>
+                    <td class="p-4 font-mono">${row.JanCD || "-"}</td>
+                    <td class="p-4 truncate max-w-[120px]">${row.MakerName || "-"}</td>
+                    <td class="p-4 truncate max-w-[100px] text-gray-500">${row.Memo || "-"}</td>
+                    <td class="p-4 text-right">¥${row.ListPrice ? Number(row.ListPrice).toLocaleString() : "-"}</td>
+                    <td class="p-4 text-right font-bold">¥${row.SalePrice ? Number(row.SalePrice).toLocaleString() : "-"}</td>
+                    <td class="p-4">
+                        <div class="text-xs ${isError ? 'text-red-600' : 'text-yellow-600'}">
+                            ${isError ? row.errors[0] : (isWarning ? row.warnings[0] : '<span class="text-green-600">No issues</span>')}
+                        </div>
+                    </td>
+                </tr>`;
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(previewData.length / rowsPerPage);
+        paginationNav.innerHTML = "";
+
+        // Previous Button
+        addPaginationButton("<", () => { if (currentPage > 1) { currentPage--; renderTable(currentPage); } });
+
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            // Simple logic: only show pages near current or first/last
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                addPaginationButton(i, () => { currentPage = i; renderTable(currentPage); }, i === currentPage);
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                const dots = document.createElement("span");
+                dots.className = "relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300";
+                dots.textContent = "...";
+                paginationNav.appendChild(dots);
+            }
+        }
+
+        // Next Button
+        addPaginationButton(">", () => { if (currentPage < totalPages) { currentPage++; renderTable(currentPage); } });
+    }
+
+    function addPaginationButton(text, onClick, isActive = false) {
+        const btn = document.createElement("button");
+        btn.innerHTML = text;
+        btn.className = isActive 
+            ? "relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            : "relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0";
+        btn.addEventListener("click", onClick);
+        paginationNav.appendChild(btn);
+    }
+
+    // Initial load
+    renderTable(currentPage);
+});
+//06-Feb-2026
     </script>
 </body>
 </html>

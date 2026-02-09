@@ -351,7 +351,7 @@ function validateJanGeneric(input, { enforceExact13 = false } = {}) {
     if (!input) return { ok: false, reason: 'missing input', raw: '' };
 
     // 1. Sanitize: Keep digits 1-9 only (Removes non-digits AND the digit 0)
-    let raw = input.value.replace(/[^1-9]/g, '');
+    let raw = input.value.replace(/[^0-9]/g, '');
 
     // Update input value immediately
     input.value = raw;
@@ -372,10 +372,7 @@ function validateJanGeneric(input, { enforceExact13 = false } = {}) {
         return { ok: false, reason: 'empty', raw };
     }
 
-    // NOTE: The "Leading zero check" (Step 4) is removed because 
-    // the sanitization above makes it impossible for a 0 to exist.
-
-    // --- Check for Validity based on length ---
+    
     if (raw.length === 13) {
         setValid(input);
         return { ok: true, reason: 'valid', raw };
@@ -962,7 +959,6 @@ function submitButtonValidate(){
                     submitButton.disable = false;
     }
 
-    
-            //04-feb-2026 Fixed Update
+    //06-Feb-2026
 
 

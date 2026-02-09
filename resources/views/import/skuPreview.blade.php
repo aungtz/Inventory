@@ -215,7 +215,7 @@
                 
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-3">
-                    <a href="/item-master/import" class="inline-flex items-center px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300">
+                    <a href="/sku-master/import" class="inline-flex items-center px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Back to Import
                     </a>
@@ -289,7 +289,25 @@
                 </table>
             </div>
             
-            
+               <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+    <div class="flex flex-1 justify-between sm:hidden">
+        <button id="prevBtnMobile" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</button>
+        <button id="nextBtnMobile" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</button>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+            <p class="text-sm text-gray-700">
+                Showing <span id="startRange" class="font-medium">0</span> to <span id="endRange" class="font-medium">0</span> of <span id="totalResults" class="font-medium">0</span> results
+            </p>
+        </div>
+        <div>
+            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination" id="skuPaginationNav">
+                </nav>
+        </div>
+    </div>
+</div>
+         
+        </div>
             <input type="hidden" id="importType" value="2">
 
         </div>
@@ -303,13 +321,7 @@
              <script src="{{ asset('js/validation/import-validation.js') }}?v={{ time() }}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Filter functionality
-           
-            const reimportBtn = document.getElementById('reimportBtn');
-            reimportBtn.addEventListener('click', function() {
-                window.location.href = '/sku-master/import';
-            });
+   
             
             // Search functionality
            
@@ -318,13 +330,7 @@
             
             
             // Pagination buttons
-            document.querySelectorAll('.pagination button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttonText = this.textContent.trim();
-                    alert(`Page navigation: ${buttonText} (simulated)`);
-                });
-            });
-        });
+           
        
     const previewData = JSON.parse(sessionStorage.getItem("skuPreviewData") || "[]");
     function renderSKUTable(previewData) {
@@ -415,7 +421,7 @@
 </td>
 
 <!-- JanCD -->
-<td class="p-4 font-mono w-40">
+<td class=" font-mono w-36 min-w-[140px]">
     <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
           title="${row.JanCD || '-'}">
         ${row.JanCD || "-"}
@@ -549,7 +555,129 @@ function initTooltips() {
         checkOverflow(cell);
     });
 }
-//04-feb-2026 Fixed Update
-    </script>
+document.addEventListener("DOMContentLoaded", function () {
+    const skuPreviewBody = document.getElementById("skuPreviewBody");
+    const paginationNav = document.getElementById("skuPaginationNav"); // Ensure this ID matches your HTML
+
+    // Retrieve data
+    const previewData = JSON.parse(sessionStorage.getItem("skuPreviewData") || "[]");
+
+    // Pagination Settings
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function renderSKUTable(page) {
+        if (!skuPreviewBody) return;
+        skuPreviewBody.innerHTML = "";
+
+        if (previewData.length === 0) {
+            skuPreviewBody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-gray-500">No SKU preview data found.</td></tr>`;
+            return;
+        }
+
+        // Calculate slice
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedItems = previewData.slice(start, end);
+
+        // Map through paginated data
+        skuPreviewBody.innerHTML = paginatedItems.map(row => {
+            let statusBadge = "";
+            let rowClass = "";
+
+            if (row.status === "Error" || (row.errors && row.errors.length > 0)) {
+                statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i> Error</span>`;
+                rowClass = "error-row hover:bg-red-50";
+            } else if (row.status === "Warning" || (row.warnings && row.warnings.length > 0)) {
+                statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-triangle mr-1"></i> Warning</span>`;
+                rowClass = "warning-row hover:bg-yellow-50";
+            } else {
+                statusBadge = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i> Valid</span>`;
+                rowClass = "hover:bg-green-50";
+            }
+
+            return `
+            <tr class="${rowClass} transition-all duration-200 border-b border-gray-100">
+                <td class="p-4 font-mono">${row.lineNo || "_"}</td>
+                <td class="p-4">${statusBadge}</td>
+                <td class="p-4 font-mono font-medium text-purple-600 w-40 truncate" title="${row.Item_Code || '-'}">${row.Item_Code || "-"}</td>
+                <td class="p-4 w-40">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full truncate" title="${row.SizeName || '-'}">
+                        ${row.SizeName || "-"}
+                    </span>
+                </td>
+                <td class="p-4 w-48">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full mr-2" style="background-color: #${row.ColorCode || 'ccc'}"></span>
+                        <span class="truncate" title="${row.ColorName || '-'}">${row.ColorName || "-"}</span>
+                    </div>
+                </td>
+                <td class="p-4 w-32 truncate">${row.SizeCode || "-"}</td>
+                <td class="p-4 w-32 truncate">${row.ColorCode || "-"}</td>
+                <td class="p-4 font-mono w-40 truncate">${row.JanCD || "-"}</td>
+                <td class="p-4 w-28 text-right font-bold">${row.Quantity || "0"}</td>
+                <td class="p-4">
+                    <div class="text-xs space-y-1">
+                        ${renderIssueMessages(row)}
+                    </div>
+                </td>
+            </tr>`;
+        }).join("");
+
+        updatePaginationUI();
+    }
+
+    function renderIssueMessages(row) {
+        if (row.errors?.length > 0) {
+            return row.errors.map(err => `<div class="text-red-600 truncate" title="${err}"><i class="fas fa-times-circle mr-1"></i>${err}</div>`).join("");
+        } else if (row.warnings?.length > 0) {
+            return row.warnings.map(warn => `<div class="text-yellow-600 truncate" title="${warn}"><i class="fas fa-exclamation-triangle mr-1"></i>${warn}</div>`).join("");
+        }
+        return `<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>No issues</span>`;
+    }
+
+    function updatePaginationUI() {
+        if (!paginationNav) return;
+        const totalPages = Math.ceil(previewData.length / rowsPerPage);
+        paginationNav.innerHTML = "";
+
+        // Previous Button
+        addPageButton("<", () => { if (currentPage > 1) { currentPage--; renderSKUTable(currentPage); } });
+
+        // Numeric Buttons
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                addPageButton(i, () => { currentPage = i; renderSKUTable(currentPage); }, i === currentPage);
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                const dots = document.createElement("span");
+                dots.className = "px-3 py-2 text-gray-400";
+                dots.textContent = "...";
+                paginationNav.appendChild(dots);
+            }
+        }
+
+        // Next Button
+        addPageButton(">", () => { if (currentPage < totalPages) { currentPage++; renderSKUTable(currentPage); } });
+    }
+
+    function addPageButton(text, onClick, isActive = false) {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.className = isActive 
+            ? "relative z-10 inline-flex items-center bg-purple-600 px-4 py-2 text-sm font-semibold text-white focus:z-20"
+            : "relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20";
+        btn.addEventListener("click", onClick);
+        paginationNav.appendChild(btn);
+    }
+
+    // Initial Execution
+    renderSKUTable(currentPage);
+});
+
+
+
+//09 -Feb-2026
+
+</script>
 </body>
 </html>

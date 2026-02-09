@@ -134,12 +134,15 @@
     </div>
 
     <div class="relative">
-        <input
-            id="janCodeSearch"
-            type="text"
-            placeholder="JAN Code"
-            class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
-        >
+     <input
+    id="janCodeSearch"
+    type="text"
+    maxlength="13"
+    placeholder="JAN Code"
+    class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm h-[42px]"
+    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+>
     </div>
 
     <div class="relative">
@@ -243,6 +246,7 @@
             <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12">
                 <input type="checkbox" id="check-all-sku" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
             </th>
+          <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Item Admin Codes</th>
  <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">
                             @php
                                 // Get current sort parameters
@@ -284,7 +288,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $iconPath }}"></path>
                                 </svg>
                             </a>
-                        </th>            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan Code</th>
+                        </th>        
+                        
+                        <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">Jan Code</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Size</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Color</th>
             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">Size CD</th>
@@ -302,6 +308,9 @@
                class="sku-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                onchange="toggleEdit(this)" value="{{ $sku->Item_AdminCode }}">
     </td>
+    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    {{ $sku->Item_AdminCode ?? '-' }}
+                </td>
                 
                 <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <div class="truncate" title="{{ $sku->Item_Code }}">
@@ -350,14 +359,17 @@
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Out</span>
                     @endif
                 </td>
-               <td class="px-3 py-4 whitespace-nowrap text-right">
-        <input type="number" 
-name="quantities[{{ $sku->Item_AdminCode }}]"
-               value="{{ $sku->Quantity }}" 
-               disabled
-               class="qty-input w-24 px-2 py-1 text-right border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:bg-transparent disabled:border-transparent transition-all font-bold {{ $sku->Quantity <= 0 ? 'text-red-500' : 'text-gray-900' }}"
-               min="0">
-    </td>
+      <td class="px-3 py-4 whitespace-nowrap text-right ">
+    <input type="number" 
+           name="quantities[{{ $sku->Item_AdminCode }}]"
+           value="{{ $sku->Quantity }}" 
+           disabled
+           class="qty-input w-32 px-2 py-1 text-right border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:bg-transparent disabled:border-transparent transition-all font-bold {{ $sku->Quantity <= 0 ? 'text-red-500' : 'text-gray-900' }}"
+           min="0"
+           max="999999999"
+           pattern="\d{0,9}"
+           oninput="this.value = this.value.toString().slice(0, 9); if(this.value > 999999999) this.value = 999999999;">
+</td>
 
             </tr>
         @endforeach
@@ -571,6 +583,9 @@ function renderSkuRows(items) {
                class="sku-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                onchange="toggleEdit(this)" value="${item.Item_AdminCode}">
     </td>
+     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                    ${item.Item_AdminCode}
+                </td>
 
     <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         <div class="truncate" title="${item.Item_Code}">
@@ -612,14 +627,18 @@ function renderSkuRows(items) {
             : '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Out</span>'}
     </td>
 
-    <td class="px-3 py-4 whitespace-nowrap text-right">
-        <input type="number" 
-               name="quantities[${item.Item_AdminCode}]"
-               value="${item.Quantity}" 
-               disabled
-               class="qty-input w-24 px-2 py-1 text-right border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:bg-transparent disabled:border-transparent transition-all font-bold ${parseInt(item.Quantity) <= 0 ? 'text-red-500' : 'text-gray-900'}"
-               min="0">
-    </td>
+      <td class="px-3 py-4 whitespace-nowrap text-right ">
+    <input type="number" 
+           name="quantities[{{ $sku->Item_AdminCode }}]"
+           value="{{ $sku->Quantity }}" 
+           disabled
+           class="qty-input w-32 px-2 py-1 text-right border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:bg-transparent disabled:border-transparent transition-all font-bold {{ $sku->Quantity <= 0 ? 'text-red-500' : 'text-gray-900' }}"
+           min="0"
+           max="999999999"
+           pattern="\d{0,9}"
+           oninput="this.value = this.value.toString().slice(0, 9); if(this.value > 999999999) this.value = 999999999;">
+</td>
+
 </form>
 `;
 
@@ -666,7 +685,7 @@ searchBtn.addEventListener("click", () => {
     document.getElementById("adminCodeSearch")
 ].forEach(input => {
     input.addEventListener("input", () => {
-        //  if (!hasSearched) return;
+         if (!hasSearched) return;
         // if(!isExporting)return;
 
         const itemCode = itemCodeInput.value.trim();
@@ -712,10 +731,14 @@ document.querySelectorAll(".export-form").forEach(form => {
 
         const itemCode = document.getElementById("itemCodeSearch")?.value.trim() || "";
         const itemName = document.getElementById("itemNameSearch")?.value.trim() || "";
+         const janCode   = document.getElementById("janCodeSearch")?.value.trim() || "";
+         const adminCode = document.getElementById("adminCodeSearch")?.value.trim() || "";
         const live     = document.getElementById("liveSearchCheckbox")?.checked ? 1 : 0;
 
         upsertHidden(this, "item_code", itemCode);
         upsertHidden(this, "item_name", itemName);
+        upsertHidden(this,"jan_code",janCode);
+        upsertHidden(this,"admin_code",adminCode)
         upsertHidden(this, "live", live);
 
         const rows = document.querySelectorAll("#skuTableBody tr");
@@ -797,6 +820,8 @@ updateStockForm.addEventListener('submit', function(e) {
     // Submit the form
     this.submit();
 });
+   //09 -Feb-2026
+
 
 
 </script>
