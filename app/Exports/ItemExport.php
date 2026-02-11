@@ -17,18 +17,22 @@ class ItemExport implements FromQuery, WithHeadings, WithMapping, WithColumnForm
     protected $search;
     protected $viewType;
 
+    protected $isCsv;
+
 public function __construct(
     $itemCode = null,
     $itemName = null,
     $viewType = 'item',
     $janCode = null,
-    $adminCode = null
+    $adminCode = null,
+    $isCsv = false
 ) {
     $this->itemCode  = $itemCode;
     $this->itemName  = $itemName;
     $this->viewType  = $viewType;
     $this->janCode   = $janCode;
     $this->adminCode = $adminCode;
+    $this->isCsv = $isCsv;
 }
 
 
@@ -110,30 +114,40 @@ public function getCsvSettings(): array
     }
 
     public function map($row): array
-    {
-        if ($this->viewType === 'sku') {
-            return [
-                $row->Item_AdminCode,
-                $row->Item_Code,
-                $row->Size_Name,
-                $row->Color_Name,
-                $row->Size_Code,
-                $row->Color_Code,
-                $row->JanCode,
-                $row->Quantity,
-            ];
-        }
-
+{
+    if ($this->viewType === 'sku') {
         return [
-            $row->Item_Code,
-            $row->Item_Name,
-            $row->JanCD,
-            $row->MakerName,
-            $row->Memo,
-            $row->ListPrice,
-            $row->SalePrice,
+            $this->text($row->Item_AdminCode),
+            $this->text($row->Item_Code),
+            $row->Size_Name,
+            $row->Color_Name,
+            $this->text($row->Size_Code),
+            $this->text($row->Color_Code),
+            $this->text($row->JanCode),
+            $row->Quantity,
         ];
     }
+
+    return [
+        $this->text($row->Item_Code),
+        $this->text($row->Item_Name),
+        $this->text($row->JanCD),
+        $row->MakerName,
+        $row->Memo,
+        $row->ListPrice,
+        $row->SalePrice,
+    ];
+}
+
+private function text($value)
+{
+    if ($this->isCsv) {
+        return '="' . $value . '"'; // CSV-safe
+    }
+
+    return $value; // Excel-safe
+}
+
 
     public function headings(): array
     {

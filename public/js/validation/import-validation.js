@@ -10,6 +10,7 @@ const ITEM_LENGTH_MAP = {
     ColorName:100,
     Size_Code:4,
     Color_Code:4,
+    Quantity :9
 };
 
 
@@ -218,42 +219,69 @@ function parseAndValidate(file) {
 
     reader.onload = function (e) {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+
+        // ✅ IMPORTANT: raw:true prevents auto-formatting
+        const workbook = XLSX.read(data, { 
+            type: 'array',
+            raw: true
+        });
 
         const firstSheet = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheet];
 
         const importedData = XLSX.utils.sheet_to_json(worksheet, {
-            defval: ""   // <-- CRITICAL
+            defval: "",
+            raw: true
         });
 
-        // Validate
-        const validatedRows = validateImportedRows(importedData);
+        // ✅ CLEAN DATA BEFORE VALIDATION
+   const cleanedData = importedData.map(row => ({
+    ...row,
+    Item_Code: cleanField(row.Item_Code),
+    Item_Name: cleanField(row.Item_Name),
+    JanCD: cleanField(row.JanCD),
+    ListPrice: cleanField(row.ListPrice),
+    SalePrice: cleanField(row.SalePrice),
+}));
 
-        // Save
+
+        // Validate AFTER cleaning
+        const validatedRows = validateImportedRows(cleanedData);
+
         sessionStorage.setItem('previewData', JSON.stringify(validatedRows));
 
-        // Check status counts
-        const hasError = validatedRows.some(r => r.status === "Error");
-        const hasWarning = validatedRows.some(r => r.status === "Warning");
-
-        let message = "";
-
-        // if (hasError) {
-        //     message = "Some rows contain ERRORS.\n\nYou can review them in the preview page.";
-        // } else if (hasWarning) {
-        //     message = "Import contains WARNING rows.\n\nYou can review them in the preview page.";
-        // } else {
-        //     message = "All rows are valid!\n\nClick OK to continue.";
-        // }
-
-        // // Show alert, then redirect
-        // alert(message);
         window.location.href = '/itemPreview';
     };
 
     reader.readAsArrayBuffer(file);
 }
+function cleanField(value) {
+    if (!value) return "";
+
+    let str = value.toString().trim();
+
+    // Strip Excel formula for text and numbers
+    // Handles =2222002222022 and ="ssfs"
+    if (str.startsWith('="') && str.endsWith('"')) {
+        str = str.slice(2, -1);
+    } else if (str.startsWith("=")) {
+        str = str.slice(1); // remove leading =
+    }
+
+    // Remove commas
+    str = str.replace(/,/g, "");
+
+    // Convert scientific notation
+    if (str.match(/e/i)) {
+        const num = Number(str);
+        if (!isNaN(num)) {
+            str = num.toLocaleString("fullwide", { useGrouping: false });
+        }
+    }
+
+    return str;
+}
+
 
 function validateSKUImported(rows) {
     const jpRegex = /[\u3000-\u30FF\u4E00-\u9FFF\uFF00-\uFFEF]/;
@@ -328,16 +356,16 @@ function validateSKUImported(rows) {
         // -----------------------------
         if (!SizeCode) errors.push("Size Code is required");
         else if (!/^[0-9]+$/.test(SizeCode)) errors.push("Size Code must be digits only");
-        else if(exceedsByteLength(SizeCode,ITEM_LENGTH_MAP.SizeCode)){
-                    errors.push(`SizeCode exceeds DB max length (${ITEM_LENGTH_MAP.SizeCode})`);
+        else if(exceedsByteLength(SizeCode,ITEM_LENGTH_MAP.Size_Code)){
+                    errors.push(`SizeCode exceeds DB max length (${ITEM_LENGTH_MAP.Size_Code})`);
                 }
         // -----------------------------
         // 5. Color Code
         // -----------------------------
         if (!ColorCode) errors.push("Color Code is required");
         else if (!/^[0-9]+$/.test(ColorCode)) errors.push("Color Code must be digits only");
-             else if(exceedsByteLength(ColorCode,ITEM_LENGTH_MAP.ColorCode)){
-                    errors.push(`ColorCode exceeds DB max length (${ITEM_LENGTH_MAP.ColorCode})`);
+             else if(exceedsByteLength(ColorCode,ITEM_LENGTH_MAP.Color_Code)){
+                    errors.push(`ColorCode exceeds DB max length (${ITEM_LENGTH_MAP.Color_Code})`);
                 }       
         // -----------------------------
         // 6. Jan Code
@@ -573,4 +601,4 @@ function getStringByteLength(str) {
 }
 
 
-            //04-feb-2026 Fixed Update
+            //11-feb-2026 Fixed Update

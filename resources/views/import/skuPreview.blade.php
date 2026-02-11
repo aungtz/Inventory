@@ -270,8 +270,9 @@
     <table class="w-full table-fixed border-separate border-spacing-0">
                     <thead class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white ">
                         <tr>
-                            <th class="p-4 text-left font-semibold w-20">Line #</th>
+                            <th class="p-4 text-left font-semibold w-12">Line</th>
                             <th class="p-4 text-left font-semibold">Status</th>
+                             <th class="p-4 text-left font-semibold">AdminCode</th>
                             <th class="p-4 text-left font-semibold">Item_Code</th>
                             <th class="p-4 text-left font-semibold">Size_Name</th>
                             <th class="p-4 text-left font-semibold">Color_Name</th>
@@ -338,7 +339,7 @@
 
     if (!previewData.length) {
         tbody.innerHTML = `
-            <tr><td colspan="10" class="text-center py-6 text-gray-500">No SKU preview data found.</td></tr>
+            <tr><td colspan="11" class="text-center py-6 text-gray-500">No SKU preview data found.</td></tr>
         `;
         return;
     }
@@ -366,113 +367,123 @@
 
         return `
         <tr class="${rowClass} transition-all duration-200">
-    <!-- Line # -->
-    <td class="p-4 font-mono">
-        <span class="line-number">${row.lineNo || "_"}</span>
-    </td>
+            <!-- Line # -->
+            <td class="p-4 font-mono w-20">
+                <span class="line-number">${row.lineNo || "_"}</span>
+            </td>
 
-    <!-- Status -->
-    <td class="p-4">
-        ${statusBadge}
-    </td>
+            <!-- Status -->
+            <td class="p-4 w-28">
+                ${statusBadge}
+            </td>
+            
+            <!-- Item_AdminCode -->
+            <td class="p-4 font-mono font-medium text-purple-600 min-w-48"
+                title="${row.Item_AdminCode || '-'}">
+                <span class="truncate-text block whitespace-nowrap overflow-hidden text-ellipsis max-w-xs">
+                    ${row.Item_AdminCode || "-"}
+                </span>
+            </td>
+            
+            <!-- Item_Code -->
+            <td class="p-4 font-mono font-medium text-purple-600 w-44"
+                title="${row.Item_Code || '-'}">
+                <span class="truncate-text block whitespace-nowrap overflow-hidden text-ellipsis">
+                    ${row.Item_Code || "-"}
+                </span>
+            </td>
 
-   <!-- Item_Code -->
-<td class="p-4 font-mono font-medium text-purple-600 w-40"
-    title="${row.Item_Code || '-'}">
-    <span class="truncate-text block whitespace-nowrap overflow-hidden text-ellipsis">
-        ${row.Item_Code || "-"}
-    </span>
-</td>
+            <!-- Size Name -->
+            <td class="p-4 w-36">
+                <span class="truncate-text size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis"
+                      title="${row.SizeName || '-'}">
+                    ${row.SizeName || "-"}
+                </span>
+            </td>
 
-<!-- Size Name -->
-<td class="p-4 w-40">
-    <span class="truncate-text size-indicator bg-blue-100 text-blue-800 px-2 py-1 rounded inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis"
-          title="${row.SizeName || '-'}">
-        ${row.SizeName || "-"}
-    </span>
-</td>
+            <!-- Color Name -->
+            <td class="p-4 w-44">
+                <div class="flex items-center">
+                    <span class="color-indicator w-3 h-3 rounded-full flex-shrink-0"
+                          style="background-color: #${row.ColorCode || 'ccc'}"></span>
+                    <span class="ml-2 truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
+                          title="${row.ColorName || '-'}">
+                        ${row.ColorName || "-"}
+                    </span>
+                </div>
+            </td>
 
-<!-- Color Name -->
-<td class="p-4 w-48">
-    <div class="flex items-center">
-        <span class="color-indicator"
-              style="background-color: #${row.ColorCode || 'ccc'}"></span>
-        <span class="ml-2 truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
-              title="${row.ColorName || '-'}">
-            ${row.ColorName || "-"}
-        </span>
-    </div>
-</td>
+            <!-- Size Code -->
+            <td class="p-4 w-32">
+                <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
+                      title="${row.SizeCode || '-'}">
+                    ${row.SizeCode || "-"}
+                </span>
+            </td>
 
-<!-- Size Code -->
-<td class="p-4 w-32">
-    <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
-          title="${row.SizeCode || '-'}">
-        ${row.SizeCode || "-"}
-    </span>
-</td>
+            <!-- Color Code -->
+            <td class="p-4 w-32">
+                <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
+                      title="${row.ColorCode || '-'}">
+                    ${row.ColorCode || "-"}
+                </span>
+            </td>
 
-<!-- Color Code -->
-<td class="p-4 w-32">
-    <span class="truncate-text code-highlight whitespace-nowrap overflow-hidden text-ellipsis block"
-          title="${row.ColorCode || '-'}">
-        ${row.ColorCode || "-"}
-    </span>
-</td>
+            <!-- JanCD -->
+            <td class=" w-50">
+                <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
+                      title="${row.JanCD || '-'}">
+                    ${row.JanCD || "-"}
+                </span>
+            </td>
 
-<!-- JanCD -->
-<td class=" font-mono w-36 min-w-[140px]">
-    <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
-          title="${row.JanCD || '-'}">
-        ${row.JanCD || "-"}
-    </span>
-</td>
+            <!-- Quantity -->
+            <td class="p-4 w-28">
+                <span class="truncate-text quantity-normal whitespace-nowrap overflow-hidden text-ellipsis block text-right"
+                      title="${row.Quantity || '-'}">
+                    ${row.Quantity || "-"}
+                </span>
+            </td>
 
-<!-- Quantity -->
-<td class="p-4 w-28">
-    <span class="truncate-text quantity-normal whitespace-nowrap overflow-hidden text-ellipsis block text-right"
-          title="${row.Quantity || '-'}">
-        ${row.Quantity || "-"}
-    </span>
-</td>
-
-<!-- Errors / Warnings -->
-<td class="p-4">
-    <div class="space-y-1 max-h-20 overflow-y-auto"
-         title="${row.errors.concat(row.warnings).join('\n') || 'No issues'}">
-        ${
-            row.errors.length > 0
-                ? row.errors.map(err =>
-                    `<div class="text-sm text-red-600 flex items-start">
-                        <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
-                        <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
-                              title="${err}">
-                            ${err}
-                        </span>
-                    </div>`
-                  ).join("")
-                : row.warnings.length > 0
-                    ? row.warnings.map(warn =>
-                        `<div class="text-sm text-yellow-600 flex items-start">
-                            <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
-                            <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
-                                  title="${warn}">
-                                ${warn}
-                            </span>
-                        </div>`
-                      ).join("")
-                    : `<span class="text-green-600 text-sm flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        No issues
-                      </span>`
-        }
-    </div>
-</td>
-</tr>`;
+            <!-- Errors / Warnings -->
+            <td class="p-4 w-80">
+                <div class="space-y-1 max-h-20 overflow-y-auto"
+                     title="${row.errors.concat(row.warnings).join('\n') || 'No issues'}">
+                    ${
+                        row.errors.length > 0
+                            ? row.errors.map(err =>
+                                `<div class="text-sm text-red-600 flex items-start">
+                                    <i class="fas fa-times-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
+                                          title="${err}">
+                                        ${err}
+                                    </span>
+                                </div>`
+                              ).join("")
+                            : row.warnings.length > 0
+                                ? row.warnings.map(warn =>
+                                    `<div class="text-sm text-yellow-600 flex items-start">
+                                        <i class="fas fa-exclamation-triangle mr-2 mt-0.5 flex-shrink-0"></i>
+                                        <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis"
+                                              title="${warn}">
+                                            ${warn}
+                                        </span>
+                                    </div>`
+                                  ).join("")
+                                : `<span class="text-green-600 text-sm flex items-center">
+                                    <i class="fas fa-check-circle mr-2"></i>
+                                    No issues
+                                  </span>`
+                    }
+                </div>
+            </td>
+        </tr>`;
     }).join("");
-     requestAnimationFrame(() => {
+    
+    requestAnimationFrame(() => {
         initTooltips();
     });
+    console.log(previewData);
 }
 document.addEventListener("DOMContentLoaded", function () {
     // Initial render from sessionStorage (JS validation only)
@@ -641,6 +652,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPages = Math.ceil(previewData.length / rowsPerPage);
         paginationNav.innerHTML = "";
 
+        
+    // Calculate range
+    const startRange = Math.min((currentPage - 1) * rowsPerPage + 1, previewData.length);
+    const endRange = Math.min(currentPage * rowsPerPage, previewData.length);
+    
+    // Update range display
+    document.getElementById('startRange').textContent = startRange;
+    document.getElementById('endRange').textContent = endRange;
+    document.getElementById('totalResults').textContent = previewData.length;
         // Previous Button
         addPageButton("<", () => { if (currentPage > 1) { currentPage--; renderSKUTable(currentPage); } });
 
@@ -676,7 +696,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-//09 -Feb-2026
+//10 -Feb-2026
 
 </script>
 </body>

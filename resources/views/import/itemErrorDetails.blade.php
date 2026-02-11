@@ -213,20 +213,18 @@
     </td>
 
     <!-- ListPrice -->
-    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right" 
-        title="        {{ number_format($item->ListPrice, 0) }}
-">
-        <span>        {{ number_format($item->ListPrice, 0) }}
-</span>
-    </td>
+   <!-- ListPrice -->
+<td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right"
+    title="{{ number_format((float) $item->ListPrice, 0) }}">
+    <span>{{ number_format((float) $item->ListPrice, 0) }}</span>
+</td>
 
-    <!-- SalePrice -->
-    <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right" 
-        title="        {{ number_format($item->SalePrice, 0) }}
-">
-        <span>        {{ number_format($item->SalePrice, 0) }}
-</span>
-    </td>
+<!-- SalePrice -->
+<td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem] text-right"
+    title="{{ number_format((float) $item->SalePrice, 0) }}">
+    <span>{{ number_format((float) $item->SalePrice, 0) }}</span>
+</td>
+
 
     <!-- Error Message -->
     <td class="p-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[8rem]" 

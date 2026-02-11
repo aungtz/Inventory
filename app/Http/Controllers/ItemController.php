@@ -1003,7 +1003,8 @@ if ($query->count() === 0) {
             $itemName,
             $viewType,
             $janCode,
-            $adminCode
+            $adminCode,
+            true 
             ),
             $fileName . '.csv',
             \Maatwebsite\Excel\Excel::CSV
@@ -1017,7 +1018,8 @@ if ($query->count() === 0) {
             $itemName,
             $viewType,
             $janCode,
-            $adminCode
+            $adminCode,
+            false
         ),
         $fileName . '.xlsx'
     );

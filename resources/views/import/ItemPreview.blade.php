@@ -318,6 +318,7 @@
 
     // Retrieve preview data from sessionStorage
     const previewData = JSON.parse(sessionStorage.getItem("previewData") || "[]");
+    console.log(previewData)
 
     if (previewData.length === 0) {
         tableBody.innerHTML = `
@@ -615,7 +616,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </td>
                     <td class="p-4 font-mono truncate max-w-[120px]" title="${row.Item_Code}">${row.Item_Code || "-"}</td>
                     <td class="p-4 truncate max-w-[150px]" title="${row.Item_Name}">${row.Item_Name || "-"}</td>
-                    <td class="p-4 font-mono">${row.JanCD || "-"}</td>
+                    <td class=" font-mono w-40 truncate">${row.JanCD || "-"}</td>
                     <td class="p-4 truncate max-w-[120px]">${row.MakerName || "-"}</td>
                     <td class="p-4 truncate max-w-[100px] text-gray-500">${row.Memo || "-"}</td>
                     <td class="p-4 text-right">¥${row.ListPrice ? Number(row.ListPrice).toLocaleString() : "-"}</td>

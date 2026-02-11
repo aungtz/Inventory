@@ -316,62 +316,62 @@
     </tr>
 </thead>
             <tbody class="bg-white divide-y divide-gray-200" id="itemsTableBody">
-                @foreach ($items as $index => $item)    
-                    <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-4 py-4 whitespace-nowrap">
-                            <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" value="{{ $item->Item_Code }}">
-                        </td>
+               @foreach ($items as $index => $item)    
+    <tr class="hover:bg-blue-50/30 transition-colors">
+        <td class="px-4 py-4 whitespace-nowrap">
+            <input type="checkbox" class="item-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" value="{{ $item->Item_Code }}">
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            <div class="truncate" title="{{ $item->Item_Code }}">
-                                <a href="{{ route('items.edit', $item->Item_Code) }}" class="text-blue-600 hover:underline">
-                                    {{ $item->Item_Code ?? '-' }}
-                                </a>
-                            </div>
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="truncate" title="{{ $item->Item_Code }}">
+                <a href="{{ route('items.edit', $item->Item_Code) }}" class="text-blue-600 hover:underline">
+                    {{ $item->Item_Code ?? '-' }}
+                </a>
+            </div>
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">
-                            <div class="truncate font-medium" title="{{ $item->Item_Name }}">
-                                {{ $item->Item_Name ?? '-' }}
-                            </div>
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="truncate" title="{{ $item->Item_Name }}">
+                {{ $item->Item_Name ?? '-' }}
+            </div>
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="truncate" title="{{ $item->JanCD }}">
-                                {{ $item->JanCD ?? '-' }}
-                            </div>
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="truncate" title="{{ $item->JanCD }}">
+                {{ $item->JanCD ?? '-' }}
+            </div>
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="truncate" title="{{ $item->MakerName }}">
-                                {{ $item->MakerName ?? '-' }}
-                            </div>
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="truncate" title="{{ $item->MakerName }}">
+                {{ $item->MakerName ?? '-' }}
+            </div>
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="truncate" title="{{ $item->Memo }}">
-                                {{ $item->Memo ?? '-' }}
-                            </div>
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="truncate" title="{{ $item->Memo }}">
+                {{ $item->Memo ?? '-' }}
+            </div>
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm font-semibold text-green-600 text-right">
-                            ¥{{ number_format($item->ListPrice ?? 0) }}
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
+            ¥{{ number_format($item->ListPrice ?? 0) }}
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-sm font-semibold text-green-600 text-right">
-                            ¥{{ number_format($item->SalePrice ?? 0) }}
-                        </td>
+        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
+            ¥{{ number_format($item->SalePrice ?? 0) }}
+        </td>
 
-                        <td class="px-3 py-4 whitespace-nowrap text-center">
-                            <button class="view-sku-btn inline-flex items-center px-2.5 py-1.5 bg-white border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 hover:bg-gray-50 focus:outline-none"
-                                data-code="{{ trim($item->Item_Code) }}"
-                                data-name="{{ $item->Item_Name }}"
-                                data-id="{{ $item->id ?? '' }}">
-                                <i class="fas fa-eye mr-1 text-blue-500"></i> SKU
-                            </button>
-                        </td>
-                    </tr>
-                @endforeach
+        <td class="px-3 py-4 whitespace-nowrap text-center">
+            <button class="view-sku-btn inline-flex items-center px-2.5 py-1.5 bg-white border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 hover:bg-gray-50 focus:outline-none"
+                data-code="{{ trim($item->Item_Code) }}"
+                data-name="{{ $item->Item_Name }}"
+                data-id="{{ $item->id ?? '' }}">
+                <i class="fas fa-eye mr-1 text-blue-500"></i> SKU
+            </button>
+        </td>
+    </tr>
+@endforeach
             </tbody>
         </table>
     </div>
