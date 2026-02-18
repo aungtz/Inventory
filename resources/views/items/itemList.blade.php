@@ -240,7 +240,7 @@
                 </button>
                 
                 <!-- Create New Button -->
-                <a href="/items-create" class="shrink-0">
+                <a href="/items-create" class="shrink-0"  target="_blank">
                     <button 
                         class="px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center justify-center shrink-0"
                     >
@@ -324,7 +324,7 @@
 
         <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
             <div class="truncate" title="{{ $item->Item_Code }}">
-                <a href="{{ route('items.edit', $item->Item_Code) }}" class="text-blue-600 hover:underline">
+                <a href="{{ route('items.edit', $item->Item_Code) }}" target="_blank" class="text-blue-600 hover:underline">
                     {{ $item->Item_Code ?? '-' }}
                 </a>
             </div>
@@ -886,7 +886,7 @@ function renderSearchRows(items) {
 
             <!-- Item Code -->
             <td class="w-32 px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 cursor-pointer hover:bg-blue-50">
-                <a href="/items/${item.Item_Code}/edit" class="block w-full h-full">
+                <a href="/items/${item.Item_Code}/edit"  target="_blank" class="block w-full h-full">
                     <div class="truncate hover:text-blue-600" title="${item.Item_Code ?? ''}">
                         ${item.Item_Code ?? '-'}
                     </div>
@@ -1395,7 +1395,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-//06-Feb-2026
+//10-Feb-2026
 </script>
 </body>
 </html>

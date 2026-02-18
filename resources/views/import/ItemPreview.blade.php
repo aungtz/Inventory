@@ -438,7 +438,7 @@
 </td>
 
 <!-- ListPrice -->
-<td class="p-4 text-right font-medium">
+<td class=" text-right font-medium  w-36 min-w-[140px]">
     <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
           title="${row.ListPrice ? Number(row.ListPrice).toLocaleString('en-US') : '-'}">
         ${row.ListPrice ? Number(row.ListPrice).toLocaleString('en-US') : '-'}
@@ -446,7 +446,7 @@
 </td>
 
 <!-- SalePrice -->
-<td class="p-4 text-right font-medium">
+<td class="text-right font-medium  w-36 min-w-[140px]">
     <span class="truncate-text whitespace-nowrap overflow-hidden text-ellipsis block"
           title="${row.SalePrice ? Number(row.SalePrice).toLocaleString('en-US') : '-'}">
         ${row.SalePrice ? Number(row.SalePrice).toLocaleString('en-US') : '-'}
@@ -616,11 +616,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     </td>
                     <td class="p-4 font-mono truncate max-w-[120px]" title="${row.Item_Code}">${row.Item_Code || "-"}</td>
                     <td class="p-4 truncate max-w-[150px]" title="${row.Item_Name}">${row.Item_Name || "-"}</td>
-                    <td class=" font-mono w-40 truncate">${row.JanCD || "-"}</td>
-                    <td class="p-4 truncate max-w-[120px]">${row.MakerName || "-"}</td>
-                    <td class="p-4 truncate max-w-[100px] text-gray-500">${row.Memo || "-"}</td>
-                    <td class="p-4 text-right">¥${row.ListPrice ? Number(row.ListPrice).toLocaleString() : "-"}</td>
-                    <td class="p-4 text-right font-bold">¥${row.SalePrice ? Number(row.SalePrice).toLocaleString() : "-"}</td>
+                    <td class="font-mono w-40 truncate" title="${row.JanCD}">${row.JanCD || "-"}</td>
+                    <td class="p-4 truncate max-w-[120px]" title="${row.MakerName}">${row.MakerName || "-"}</td>
+                    <td class="p-4 truncate max-w-[100px] " title="${row.Memo}">${row.Memo || "-"}</td>
+                    <td class=" truncate w-40  text-right" title="${row.ListPrice}">¥${row.ListPrice ? Number(row.ListPrice).toLocaleString() : "-"}</td>
+                    <td class="truncate w-40  text-right" title="${row.SalePrice}">¥${row.SalePrice ? Number(row.SalePrice).toLocaleString() : "-"}</td>
                     <td class="p-4">
                         <div class="text-xs ${isError ? 'text-red-600' : 'text-yellow-600'}">
                             ${isError ? row.errors[0] : (isWarning ? row.warnings[0] : '<span class="text-green-600">No issues</span>')}

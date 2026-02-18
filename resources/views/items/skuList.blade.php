@@ -211,7 +211,7 @@
             </button>
             
             <!-- Create New Button -->
-            <a href="/items-create" class="shrink-0">
+            <a href="/items-create" class="shrink-0"  target="_blank">
                 <button 
                     class="px-4 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm hover:shadow min-w-[100px] sm:min-w-[120px]"
                 >
@@ -314,7 +314,7 @@
                 
                 <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <div class="truncate" title="{{ $sku->Item_Code }}">
-                                <a href="{{ route('items.edit', $sku->Item_Code) }}" class="text-blue-600 hover:underline">
+                                <a href="{{ route('items.edit', $sku->Item_Code) }}" target="_blank" class="text-blue-600 hover:underline">
                                    {{ $sku->Item_Code }}
                                 </a>
                             </div>
@@ -820,7 +820,7 @@ updateStockForm.addEventListener('submit', function(e) {
     // Submit the form
     this.submit();
 });
-   //09 -Feb-2026
+   //10-Feb-2026
 
 
 
