@@ -141,7 +141,7 @@
                 </a>
 
 
-                <a href="/items-create" id="nav-create-items"  target="_blank"class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                <a href="/items-create" id="nav-create-items"  target="_blank" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -208,7 +208,7 @@
                     <span>SKU List</span>
                 </a>
 
-                <a href="/items-create" id="nav-create-items-desktop" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                <a href="/items-create" id="nav-create-items-desktop" target="_blank" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Your existing click listeners and other code...
 });
 
-        //11-feb-2026 Fixed Update
+        //18-feb-2026 Fixed Update
     </script>
 </body>
 </html>
